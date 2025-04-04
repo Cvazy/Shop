@@ -4,10 +4,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { authService, IAuthForm } from "@/entities";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Button, Input, Switcher } from "@/shared";
+import { Button, Input, Switcher, FuzzyText } from "@/shared";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { FuzzyText } from "@/shared/ui/FuzzyText";
 
 export const AuthForm = () => {
   const [isLoginForm, setIsLoginForm] = useState<boolean>(true);
@@ -60,11 +59,7 @@ export const AuthForm = () => {
                 })}
               />
 
-              <Button
-                text={isLoginForm ? "Login" : "Registration"}
-                type={"submit"}
-                className={"p-4 text-bold text-lg"}
-              />
+              <Button text={isLoginForm ? "Login" : "Registration"} />
 
               <div
                 className={

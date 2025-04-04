@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   title: {
     default: SITE_NAME,
     template: `%s | ${SITE_NAME}`,
-    absolute: false,
   },
 
   description: "Alcohol Shop",

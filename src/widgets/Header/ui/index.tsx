@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { GlitchText } from "@/shared/ui/GlitchText/ui";
+import { GlitchText } from "@/shared";
 import { GooeyNav } from "@/widgets";
-import { ASCIIText } from "@/shared";
 
 export const Header = () => {
   return (
@@ -30,10 +29,6 @@ export const Header = () => {
                   { label: "Contact", href: "/contact" },
                 ]}
                 animationTime={600}
-                pCount={15}
-                minDistance={20}
-                maxDistance={42}
-                maxRotate={75}
                 colors={[1, 2, 3, 1, 2, 3, 1, 4]}
                 timeVariance={300}
               />

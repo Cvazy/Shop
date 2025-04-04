@@ -15,7 +15,7 @@ interface CustomCSSProperties extends CSSProperties {
   "--before-shadow": string;
 }
 
-export const GlitchText: FC<GlitchTextProps> = ({
+const GlitchText: FC<GlitchTextProps> = ({
   children,
   speed = 0.5,
   enableShadows = true,
@@ -48,3 +48,5 @@ export const GlitchText: FC<GlitchTextProps> = ({
     </div>
   );
 };
+
+export default GlitchText;

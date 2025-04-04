@@ -53,7 +53,7 @@ function pointerPrototype(): Pointer {
   };
 }
 
-export function SplashCursor({
+export default function SplashCursor({
   SIM_RESOLUTION = 128,
   DYE_RESOLUTION = 1440,
   CAPTURE_RESOLUTION = 512,
@@ -66,7 +66,7 @@ export function SplashCursor({
   SPLAT_FORCE = 6000,
   SHADING = true,
   COLOR_UPDATE_SPEED = 10,
-  BACK_COLOR = { r: 0.7, g: 0, b: 0 },
+  BACK_COLOR = { r: 0.5, g: 0, b: 0 },
   TRANSPARENT = true,
 }: SplashCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -1540,7 +1540,7 @@ export function SplashCursor({
   ]);
 
   return (
-    <div className="fixed top-0 left-0 z-50 pointer-events-none grayscale w-full h-full">
+    <div className="fixed top-0 left-0 z-50 pointer-events-none w-full h-full">
       <canvas
         ref={canvasRef}
         id="fluid"

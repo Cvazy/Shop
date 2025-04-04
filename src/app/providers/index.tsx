@@ -3,7 +3,8 @@
 import { PropsWithChildren, Suspense, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ClickSparkProvider, Loader, SplashCursor } from "@/shared";
+import { ClickSparkProvider, Loader } from "@/shared";
+import SplashCursor from "@/components/SplashCursor/SplashCursor";
 
 export function Providers({ children }: PropsWithChildren) {
   const [client] = useState(

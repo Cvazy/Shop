@@ -1,9 +1,9 @@
 "use client";
 
-import { Children, FC, ReactNode, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface FuzzyTextProps {
-  children: ReactNode;
+  children: React.ReactNode;
   fontSize?: number | string;
   fontWeight?: string | number;
   fontFamily?: string;
@@ -13,7 +13,7 @@ interface FuzzyTextProps {
   hoverIntensity?: number;
 }
 
-export const FuzzyText: FC<FuzzyTextProps> = ({
+const FuzzyText: React.FC<FuzzyTextProps> = ({
   children,
   fontSize = "clamp(2rem, 8vw, 8rem)",
   fontWeight = 900,
@@ -59,7 +59,7 @@ export const FuzzyText: FC<FuzzyTextProps> = ({
         document.body.removeChild(temp);
       }
 
-      const text = Children.toArray(children).join("");
+      const text = React.Children.toArray(children).join("");
 
       const offscreen = document.createElement("canvas");
       const offCtx = offscreen.getContext("2d");
@@ -206,5 +206,7 @@ export const FuzzyText: FC<FuzzyTextProps> = ({
     hoverIntensity,
   ]);
 
-  return <canvas ref={canvasRef} className={"relative"} />;
+  return <canvas ref={canvasRef} />;
 };
+
+export default FuzzyText;

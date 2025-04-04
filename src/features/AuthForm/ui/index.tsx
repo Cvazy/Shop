@@ -4,9 +4,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { authService, IAuthForm } from "@/entities";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Button, Input, Switcher, FuzzyText } from "@/shared";
+import { Button, Input, Switcher } from "@/shared";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import FuzzyText from "@/components/FuzzyText/FuzzyText";
 
 export const AuthForm = () => {
   const [isLoginForm, setIsLoginForm] = useState<boolean>(true);

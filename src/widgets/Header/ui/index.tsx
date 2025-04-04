@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { GlitchText } from "@/shared";
 import { GooeyNav } from "@/widgets";
+import GlitchText from "@/components/GlitchText/GlitchText";
 
 export const Header = () => {
   return (

@@ -86,7 +86,9 @@ const GridMotion: FC<GridMotionProps> = ({
               key={rowIndex}
               className="flex justify-between gap-4 w-max"
               style={{ willChange: "transform, filter" }}
-              ref={(el) => (rowRefs.current[rowIndex] = el)}
+              ref={(el) => {
+                rowRefs.current[rowIndex] = el;
+              }}
             >
               {Array.from({ length: columnsCount }).map((_, itemIndex) => {
                 const content =

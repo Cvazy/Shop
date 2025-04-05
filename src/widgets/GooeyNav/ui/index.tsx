@@ -11,6 +11,7 @@ import {
 
 import "./GooeyNav.css";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface GooeyNavItem {
   label: string;
@@ -43,7 +44,10 @@ export const GooeyNav: FC<GooeyNavProps> = ({
   const filterRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [activeIndex, setActiveIndex] = useState<number>(initialActiveIndex);
+  const pathname = usePathname();
+
   const noise = (n = 1) => n / 2 - Math.random() * n;
+
   const getXY = (
     distance: number,
     pointIndex: number,
@@ -53,6 +57,7 @@ export const GooeyNav: FC<GooeyNavProps> = ({
       ((360 + noise(8)) / totalPoints) * pointIndex * (Math.PI / 180);
     return [distance * Math.cos(angle), distance * Math.sin(angle)];
   };
+
   const createParticle = (
     i: number,
     t: number,
@@ -69,6 +74,7 @@ export const GooeyNav: FC<GooeyNavProps> = ({
       rotate: rotate > 0 ? (rotate + r / 20) * 10 : (rotate - r / 20) * 10,
     };
   };
+
   const makeParticles = (element: HTMLElement) => {
     const d: [number, number] = particleDistances;
     const r = particleR;
@@ -104,6 +110,7 @@ export const GooeyNav: FC<GooeyNavProps> = ({
       }, 30);
     }
   };
+
   const updateEffectPosition = (element: HTMLElement) => {
     if (!containerRef.current || !filterRef.current || !textRef.current) return;
     const containerRect = containerRef.current.getBoundingClientRect();
@@ -118,6 +125,7 @@ export const GooeyNav: FC<GooeyNavProps> = ({
     Object.assign(textRef.current.style, styles);
     textRef.current.innerText = element.innerText;
   };
+
   const handleClick = (e: MouseEvent<HTMLLIElement>, index: number) => {
     const liEl = e.currentTarget;
     if (activeIndex === index) return;
@@ -136,41 +144,6 @@ export const GooeyNav: FC<GooeyNavProps> = ({
       makeParticles(filterRef.current);
     }
   };
-  const handleKeyDown = (
-    e: KeyboardEvent<HTMLAnchorElement>,
-    index: number,
-  ) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      const liEl = e.currentTarget.parentElement;
-      if (liEl) {
-        handleClick(
-          { currentTarget: liEl } as MouseEvent<HTMLLIElement>,
-          index,
-        );
-      }
-    }
-  };
-  useEffect(() => {
-    if (!navRef.current || !containerRef.current) return;
-    const activeLi = navRef.current.querySelectorAll("li")[
-      activeIndex
-    ] as HTMLElement;
-    if (activeLi) {
-      updateEffectPosition(activeLi);
-      textRef.current?.classList.add("active");
-    }
-    const resizeObserver = new ResizeObserver(() => {
-      const currentActiveLi = navRef.current?.querySelectorAll("li")[
-        activeIndex
-      ] as HTMLElement;
-      if (currentActiveLi) {
-        updateEffectPosition(currentActiveLi);
-      }
-    });
-    resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
-  }, [activeIndex]);
 
   return (
     <div className="relative" ref={containerRef}>
@@ -186,20 +159,16 @@ export const GooeyNav: FC<GooeyNavProps> = ({
             textShadow: "0 1px 1px hsl(205deg 30% 10% / 0.2)",
           }}
         >
-          {items.map((item, index) => (
+          {items.map(({ label, href }, index) => (
             <li
               key={index}
-              className={`py-[0.6em] px-[1em] rounded-full relative cursor-pointer transition-[background-color_color_box-shadow] duration-300 ease shadow-[0_0_0.5px_1.5px_transparent] text-white ${
-                activeIndex === index ? "active" : ""
+              className={`flex rounded-full relative cursor-pointer transition-[background-color_color_box-shadow] duration-300 ease shadow-[0_0_0.5px_1.5px_transparent] text-white ${
+                pathname === href ? "active" : ""
               }`}
               onClick={(e) => handleClick(e, index)}
             >
-              <Link
-                href={item.href}
-                onKeyDown={(e) => handleKeyDown(e, index)}
-                className={"outline-none"}
-              >
-                {item.label}
+              <Link href={href} className={"outline-none py-2 px-4"}>
+                {label}
               </Link>
             </li>
           ))}

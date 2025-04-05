@@ -91,7 +91,6 @@ interface BandProps {
 }
 
 function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
-  // Using "any" for refs since the exact types depend on Rapier's internals
   const band = useRef<any>(null);
   const fixed = useRef<any>(null);
   const j1 = useRef<any>(null);
@@ -112,9 +111,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
     linearDamping: 4,
   };
 
-  const { nodes } = useGLTF(
-    "/assets/jagermeister_0.7l_bottle_japan.glb",
-  ) as any;
+  const { nodes } = useGLTF("/assets/card.glb") as any;
 
   const texture = useTexture("/assets/lanyard.png");
   const [curve] = useState(

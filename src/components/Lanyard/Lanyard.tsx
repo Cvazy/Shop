@@ -112,7 +112,10 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
     linearDamping: 4,
   };
 
-  const { nodes, materials } = useGLTF("/assets/card.glb") as any;
+  const { nodes } = useGLTF(
+    "/assets/jagermeister_0.7l_bottle_japan.glb",
+  ) as any;
+
   const texture = useTexture("/assets/lanyard.png");
   const [curve] = useState(
     () =>
@@ -236,8 +239,9 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
         >
           <CuboidCollider args={[0.8, 1.125, 0.01]} />
           <group
-            scale={2.25}
-            position={[0, -1.2, -0.05]}
+            scale={0.7}
+            position={[0, -1.6, 0.05]}
+            rotation={[-Math.PI / 2, 0, 0]}
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
             onPointerUp={(e: any) => {
@@ -253,22 +257,15 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
               );
             }}
           >
-            <mesh geometry={nodes.card.geometry}>
-              <meshPhysicalMaterial
-                map={materials.base.map}
-                map-anisotropy={16}
-                clearcoat={1}
-                clearcoatRoughness={0.15}
-                roughness={0.9}
-                metalness={0.8}
-              />
-            </mesh>
             <mesh
-              geometry={nodes.clip.geometry}
-              material={materials.metal}
-              material-roughness={0.3}
-            />
-            <mesh geometry={nodes.clamp.geometry} material={materials.metal} />
+              geometry={nodes.Object_2.geometry}
+              material={nodes.Object_2.material}
+            ></mesh>
+
+            <mesh
+              geometry={nodes.Object_3.geometry}
+              material={nodes.Object_3.material}
+            ></mesh>
           </group>
         </RigidBody>
       </group>

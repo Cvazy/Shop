@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import React, { useRef, useState, useEffect } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { EffectComposer, wrapEffect } from "@react-three/postprocessing";
 import { Effect } from "postprocessing";
 import * as THREE from "three";
@@ -168,6 +168,7 @@ interface DitheredWavesProps {
   waveColor: [number, number, number];
   colorNum: number;
   pixelSize: number;
+  disableAnimation: boolean;
 }
 
 function DitheredWaves({
@@ -177,13 +178,14 @@ function DitheredWaves({
   waveColor,
   colorNum,
   pixelSize,
+  disableAnimation,
 }: DitheredWavesProps) {
   const mesh = useRef<THREE.Mesh>(null);
   const effect = useRef<RetroEffectImpl>(null);
   const { viewport, size, gl } = useThree();
 
   const waveUniformsRef = useRef<WaveUniforms>({
-    time: new THREE.Uniform(0), // Оставляем time, но он теперь не будет меняться
+    time: new THREE.Uniform(0),
     resolution: new THREE.Uniform(new THREE.Vector2(0, 0)),
     waveSpeed: new THREE.Uniform(waveSpeed),
     waveFrequency: new THREE.Uniform(waveFrequency),
@@ -210,13 +212,19 @@ function DitheredWaves({
     }
   }, [size, gl]);
 
-  // Устанавливаем начальные значения для эффекта
-  useEffect(() => {
+  useFrame(({ clock }) => {
+    if (!disableAnimation) {
+      waveUniformsRef.current.time.value = clock.getElapsedTime();
+    }
+    waveUniformsRef.current.waveSpeed.value = waveSpeed;
+    waveUniformsRef.current.waveFrequency.value = waveFrequency;
+    waveUniformsRef.current.waveAmplitude.value = waveAmplitude;
+    waveUniformsRef.current.waveColor.value.set(...waveColor);
     if (effect.current) {
       effect.current.colorNum = colorNum;
       effect.current.pixelSize = pixelSize;
     }
-  }, [colorNum, pixelSize]);
+  });
 
   return (
     <>
@@ -242,6 +250,7 @@ interface DitherProps {
   waveColor?: [number, number, number];
   colorNum?: number;
   pixelSize?: number;
+  disableAnimation?: boolean;
 }
 
 export default function Dither({
@@ -251,18 +260,20 @@ export default function Dither({
   waveColor = [0.5, 0.5, 0.5],
   colorNum = 4,
   pixelSize = 2,
+  disableAnimation = false,
 }: DitherProps) {
+  const [dpr, setDpr] = useState<number>(1);
+
+  useEffect(() => {
+    setDpr(window.devicePixelRatio);
+  }, []);
+
   return (
     <Canvas
       className="w-full h-full relative"
-      camera={{ position: [0, 0, 1], fov: 75 }}
-      dpr={[0.5, 1]}
-      gl={{
-        antialias: false,
-        powerPreference: "low-power",
-        preserveDrawingBuffer: true,
-      }}
-      frameloop={"demand"}
+      camera={{ position: [0, 0, 6] }}
+      dpr={dpr}
+      gl={{ antialias: true, preserveDrawingBuffer: true }}
     >
       <DitheredWaves
         waveSpeed={waveSpeed}
@@ -271,6 +282,7 @@ export default function Dither({
         waveColor={waveColor}
         colorNum={colorNum}
         pixelSize={pixelSize}
+        disableAnimation={disableAnimation}
       />
     </Canvas>
   );

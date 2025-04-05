@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { GooeyNav, MobileMenu } from "@/widgets";
+import { HeaderNav, MobileMenu } from "@/widgets";
 import { useState } from "react";
 import { BurgerMenuButton } from "@/features";
 import { Logo } from "@/shared";
@@ -28,15 +28,12 @@ export const Header = () => {
               </Link>
 
               <div className={"hidden lg:block"}>
-                <GooeyNav
+                <HeaderNav
                   items={[
                     { label: "Home", href: "/" },
                     { label: "About", href: "/about" },
                     { label: "Contact", href: "/contact" },
                   ]}
-                  animationTime={600}
-                  colors={[1, 2, 3, 1, 2, 3, 1, 4]}
-                  timeVariance={300}
                 />
               </div>
 

@@ -44,7 +44,6 @@ export const GooeyNav: FC<GooeyNavProps> = ({
   const filterRef = useRef<HTMLSpanElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   const [activeIndex, setActiveIndex] = useState<number>(initialActiveIndex);
-  const pathname = usePathname();
 
   const noise = (n = 1) => n / 2 - Math.random() * n;
 
@@ -163,7 +162,7 @@ export const GooeyNav: FC<GooeyNavProps> = ({
             <li
               key={index}
               className={`flex rounded-full relative cursor-pointer transition-[background-color_color_box-shadow] duration-300 ease shadow-[0_0_0.5px_1.5px_transparent] text-white ${
-                pathname === href ? "active" : ""
+                activeIndex === index ? "active" : ""
               }`}
               onClick={(e) => handleClick(e, index)}
             >

@@ -13,7 +13,9 @@ export const Footer = () => {
         </div>
       </div>
 
-      <Lanyard position={[0, 0, 20]} gravity={[0, -40, 0]} />
+      <div className={"w-full h-full grayscale"}>
+        <Lanyard position={[0, 0, 20]} gravity={[0, -40, 0]} />
+      </div>
 
       {/*<div className={"flex-grow px-4 w-full"}>*/}
       {/*  <footer className={"max-w-limit w-full"}></footer>*/}

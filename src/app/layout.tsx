@@ -38,7 +38,7 @@ export default function RootLayout({
           >
             <Header />
 
-            <div className={"flex flex-grow min-h-dvh w-full"}>
+            <div className={"flex flex-grow min-h-dvh w-full z-10"}>
               <main className={"w-full"}>{children}</main>
             </div>
 

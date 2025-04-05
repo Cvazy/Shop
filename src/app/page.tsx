@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <div className={"w-full h-full"}>
-      <div className={"w-full h-full bg-gray"}></div>
+      <div className={"w-full h-full"}>Main Page</div>
     </div>
   );
 }

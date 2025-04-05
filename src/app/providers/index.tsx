@@ -4,7 +4,7 @@ import { PropsWithChildren, Suspense, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ClickSparkProvider, Loader } from "@/shared";
-import SplashCursor from "@/components/SplashCursor/SplashCursor";
+import Particles from "@/components/Particles/Particles";
 
 export function Providers({ children }: PropsWithChildren) {
   const [client] = useState(
@@ -27,7 +27,19 @@ export function Providers({ children }: PropsWithChildren) {
           sparkCount={8}
           duration={400}
         >
-          {/*<SplashCursor />*/}
+          <div className={"absolute inset-0 z-[1]"}>
+            <Particles
+              particleColors={["#ffffff", "#ffffff"]}
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={100}
+              moveParticlesOnHover={true}
+              alphaParticles={false}
+              disableRotation={false}
+              className={"bg-foreground"}
+            />
+          </div>
 
           {children}
         </ClickSparkProvider>

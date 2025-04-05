@@ -3,7 +3,7 @@ import Lanyard from "@/components/Lanyard/Lanyard";
 
 export const Footer = () => {
   return (
-    <div className={"min-h-dvh w-full bg-background h-max relative"}>
+    <div className={"min-h-dvh w-full bg-background h-max relative z-10"}>
       <div className={"flex flex-col items-center gap-10 w-full h-full"}>
         <div className={"py-8 w-full md:py-10 xl:py-12"}>
           <ScrollVelocity

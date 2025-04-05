@@ -37,7 +37,7 @@ export function Providers({ children }: PropsWithChildren) {
               moveParticlesOnHover={true}
               alphaParticles={false}
               disableRotation={false}
-              className={"bg-foreground"}
+              className={"bg-black"}
             />
           </div>
 

@@ -2,9 +2,18 @@
 
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
-import FlowingMenu from "@/components/FlowingMenu/FlowingMenu";
+import { Navigation } from "@/widgets";
+import ShinyText from "@/components/ShinyText/ShinyText";
+import StarBorder from "@/components/StarBorder/StarBorder";
+import Link from "next/link";
 
-export const MobileMenu = ({ isOpen }: { isOpen: boolean }) => {
+export const MobileMenu = ({
+  isOpen,
+  toggleMenu,
+}: {
+  isOpen: boolean;
+  toggleMenu: () => void;
+}) => {
   const [menuHeight, setMenuHeight] = useState(0);
 
   useEffect(() => {
@@ -37,31 +46,9 @@ export const MobileMenu = ({ isOpen }: { isOpen: boolean }) => {
     };
   }, [isOpen]);
 
-  const demoItems = [
-    {
-      link: "#",
-      text: "Mojave",
-      image: "https://picsum.photos/600/400?random=1",
-    },
-    {
-      link: "#",
-      text: "Sonoma",
-      image: "https://picsum.photos/600/400?random=2",
-    },
-    {
-      link: "#",
-      text: "Monterey",
-      image: "https://picsum.photos/600/400?random=3",
-    },
-    {
-      link: "#",
-      text: "Sequoia",
-      image: "https://picsum.photos/600/400?random=4",
-    },
-  ];
-
   return (
     <motion.div
+      initial={{ height: 0 }}
       animate={{ height: menuHeight }}
       transition={{ duration: 0.5, ease: "easeInOut", delay: isOpen ? 0 : 0.5 }}
       className={
@@ -74,12 +61,24 @@ export const MobileMenu = ({ isOpen }: { isOpen: boolean }) => {
         transition={{ duration: 0.5, delay: isOpen ? 0.5 : 0 }}
         className={"w-full h-full"}
       >
-        <div className={"pt-[132px] pb-10 px-30px w-full h-full md:pt-36"}>
-          <div
-            className={
-              "flex flex-col items-start justify-between gap-4 w-full h-full"
-            }
-          ></div>
+        <div className={"pb-10 px-30px w-full h-full main-p"}>
+          <div className={"flex justify-center px-7 w-full h-full sm:px-8"}>
+            <div className={"max-w-limit w-full"}>
+              <div
+                className={
+                  "flex flex-col items-start justify-between gap-4 w-full h-full"
+                }
+              >
+                <Navigation toggleMenu={toggleMenu} />
+
+                <Link href={"/shop"} className={"w-full"} onClick={toggleMenu}>
+                  <StarBorder className={"w-full"}>
+                    <ShinyText text="Go shop!" disabled={false} speed={3} />
+                  </StarBorder>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </motion.div>
     </motion.div>

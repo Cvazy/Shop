@@ -5,7 +5,7 @@ export const metadata: Metadata = {
 };
 
 const AboutPage = () => {
-  return <div>About page</div>;
+  return <div className={"main-p w-full h-full"}>About page</div>;
 };
 
 export default AboutPage;

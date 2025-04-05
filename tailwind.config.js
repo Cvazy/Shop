@@ -6,8 +6,17 @@ module.exports = {
       maxWidth: {
         limit: "1360px",
       },
+      height: {
+        nav_item: "42px",
+      },
       fontFamily: {
         retro: ["Courier New", "monospace"],
+      },
+      fontSize: {
+        "40px": "40px",
+      },
+      lineHeight: {
+        "42px": "42px",
       },
       colors: {
         background: "var(--background)",
@@ -27,6 +36,7 @@ module.exports = {
         "glitch-before":
           "glitch var(--before-duration) infinite linear alternate-reverse",
         marquee: "marquee 15s linear infinite",
+        shine: "shine 5s linear infinite",
       },
       keyframes: {
         marquee: {
@@ -40,6 +50,10 @@ module.exports = {
         "star-movement-top": {
           "0%": { transform: "translate(0%, 0%)", opacity: "1" },
           "100%": { transform: "translate(100%, 0%)", opacity: "0" },
+        },
+        shine: {
+          "0%": { "background-position": "100%" },
+          "100%": { "background-position": "-100%" },
         },
         glitch: {
           "0%": { "clip-path": "inset(20% 0 50% 0)" },

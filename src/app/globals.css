@@ -47,3 +47,7 @@ textarea {
 path {
   outline: none;
 }
+
+.main-p {
+  @apply pt-[132px] md:pt-36 xl:pt-[152px]
+}

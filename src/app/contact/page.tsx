@@ -5,7 +5,7 @@ export const metadata: Metadata = {
 };
 
 const ContactPage = () => {
-  return <div>Contact page</div>;
+  return <div className={"main-p w-full h-full"}>Contact page</div>;
 };
 
 export default ContactPage;

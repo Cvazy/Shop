@@ -8,7 +8,7 @@ export const Footer = () => {
         <div className={"py-8 w-full md:py-10 xl:py-12"}>
           <ScrollVelocity
             texts={["AlcoShop"]}
-            className="custom-scroll-text text-foreground"
+            className="custom-scroll-text text-foreground mr-10"
           />
         </div>
       </div>

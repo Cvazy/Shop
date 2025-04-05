@@ -42,7 +42,7 @@ export const Footer = () => {
       </div>
 
       <div className={"w-full h-full relative"}>
-        <div className={"absolute z-10 top-5 right-2 lg:hidden"}>
+        <div className={"absolute z-10 top-14 right-2 lg:hidden"}>
           <div className={"flex flex-col items-start gap-2.5"}>
             <div className={"flex items-center gap-2 flex-nowrap"}>
               <p className={"text-foreground font-bold text-lg"}>

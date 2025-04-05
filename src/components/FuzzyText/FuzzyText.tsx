@@ -206,7 +206,7 @@ const FuzzyText: React.FC<FuzzyTextProps> = ({
     hoverIntensity,
   ]);
 
-  return <canvas ref={canvasRef} />;
+  return <canvas ref={canvasRef} className={"relative"} />;
 };
 
 export default FuzzyText;

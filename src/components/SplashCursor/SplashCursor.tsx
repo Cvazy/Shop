@@ -98,15 +98,8 @@ export default function SplashCursor({
       TRANSPARENT,
     };
 
-    // Get WebGL context (WebGL1 or WebGL2)
     const { gl, ext } = getWebGLContext(canvas);
     if (!gl || !ext) return;
-
-    // If no linear filtering, reduce resolution
-    if (!ext.supportLinearFiltering) {
-      config.DYE_RESOLUTION = 256;
-      config.SHADING = false;
-    }
 
     function getWebGLContext(canvas: HTMLCanvasElement) {
       const params = {
@@ -139,54 +132,39 @@ export default function SplashCursor({
       let supportLinearFiltering = false;
       let halfFloat = null;
 
-      if (isWebGL2) {
-        // For WebGL2
-        (gl as WebGL2RenderingContext).getExtension("EXT_color_buffer_float");
-        supportLinearFiltering = !!(gl as WebGL2RenderingContext).getExtension(
-          "OES_texture_float_linear",
-        );
-      } else {
-        // For WebGL1
-        halfFloat = gl.getExtension("OES_texture_half_float");
-        supportLinearFiltering = !!gl.getExtension(
-          "OES_texture_half_float_linear",
-        );
-      }
+      (gl as WebGL2RenderingContext).getExtension("EXT_color_buffer_float");
+      supportLinearFiltering = !!(gl as WebGL2RenderingContext).getExtension(
+        "OES_texture_float_linear",
+      );
 
       gl.clearColor(0, 0, 0, 1);
 
       const halfFloatTexType = isWebGL2
         ? (gl as WebGL2RenderingContext).HALF_FLOAT
-        : (halfFloat && (halfFloat as any).HALF_FLOAT_OES) || 0;
+        : 0;
 
       let formatRGBA: any;
       let formatRG: any;
       let formatR: any;
 
-      if (isWebGL2) {
-        formatRGBA = getSupportedFormat(
-          gl,
-          (gl as WebGL2RenderingContext).RGBA16F,
-          gl.RGBA,
-          halfFloatTexType,
-        );
-        formatRG = getSupportedFormat(
-          gl,
-          (gl as WebGL2RenderingContext).RG16F,
-          (gl as WebGL2RenderingContext).RG,
-          halfFloatTexType,
-        );
-        formatR = getSupportedFormat(
-          gl,
-          (gl as WebGL2RenderingContext).R16F,
-          (gl as WebGL2RenderingContext).RED,
-          halfFloatTexType,
-        );
-      } else {
-        formatRGBA = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
-        formatRG = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
-        formatR = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
-      }
+      formatRGBA = getSupportedFormat(
+        gl,
+        (gl as WebGL2RenderingContext).RGBA16F,
+        gl.RGBA,
+        halfFloatTexType,
+      );
+      formatRG = getSupportedFormat(
+        gl,
+        (gl as WebGL2RenderingContext).RG16F,
+        (gl as WebGL2RenderingContext).RG,
+        halfFloatTexType,
+      );
+      formatR = getSupportedFormat(
+        gl,
+        (gl as WebGL2RenderingContext).R16F,
+        (gl as WebGL2RenderingContext).RED,
+        halfFloatTexType,
+      );
 
       return {
         gl,
@@ -395,7 +373,6 @@ export default function SplashCursor({
       }
     }
 
-    // -------------------- Shaders --------------------
     const baseVertexShader = compileShader(
       gl.VERTEX_SHADER,
       `
@@ -691,7 +668,6 @@ export default function SplashCursor({
     `,
     );
 
-    // -------------------- Fullscreen Triangles --------------------
     const blit = (() => {
       const buffer = gl.createBuffer()!;
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -727,7 +703,6 @@ export default function SplashCursor({
       };
     })();
 
-    // Types for Framebuffers
     interface FBO {
       texture: WebGLTexture;
       fbo: WebGLFramebuffer;
@@ -748,14 +723,12 @@ export default function SplashCursor({
       swap: () => void;
     }
 
-    // FBO variables
     let dye: DoubleFBO;
     let velocity: DoubleFBO;
     let divergence: FBO;
     let curl: FBO;
     let pressure: DoubleFBO;
 
-    // WebGL Programs
     const copyProgram = new Program(baseVertexShader, copyShader);
     const clearProgram = new Program(baseVertexShader, clearShader);
     const splatProgram = new Program(baseVertexShader, splatShader);
@@ -770,7 +743,6 @@ export default function SplashCursor({
     );
     const displayMaterial = new Material(baseVertexShader, displayShaderSource);
 
-    // -------------------- FBO creation --------------------
     function createFBO(
       w: number,
       h: number,
@@ -999,7 +971,6 @@ export default function SplashCursor({
       return Math.floor(input * pixelRatio);
     }
 
-    // -------------------- Simulation Setup --------------------
     updateKeywords();
     initFramebuffers();
 
@@ -1057,48 +1028,6 @@ export default function SplashCursor({
     function step(dt: number) {
       gl.disable(gl.BLEND);
 
-      // Curl
-      curlProgram.bind();
-      if (curlProgram.uniforms.texelSize) {
-        gl.uniform2f(
-          curlProgram.uniforms.texelSize,
-          velocity.texelSizeX,
-          velocity.texelSizeY,
-        );
-      }
-      if (curlProgram.uniforms.uVelocity) {
-        gl.uniform1i(curlProgram.uniforms.uVelocity, velocity.read.attach(0));
-      }
-      blit(curl);
-
-      // Vorticity
-      vorticityProgram.bind();
-      if (vorticityProgram.uniforms.texelSize) {
-        gl.uniform2f(
-          vorticityProgram.uniforms.texelSize,
-          velocity.texelSizeX,
-          velocity.texelSizeY,
-        );
-      }
-      if (vorticityProgram.uniforms.uVelocity) {
-        gl.uniform1i(
-          vorticityProgram.uniforms.uVelocity,
-          velocity.read.attach(0),
-        );
-      }
-      if (vorticityProgram.uniforms.uCurl) {
-        gl.uniform1i(vorticityProgram.uniforms.uCurl, curl.attach(1));
-      }
-      if (vorticityProgram.uniforms.curl) {
-        gl.uniform1f(vorticityProgram.uniforms.curl, config.CURL);
-      }
-      if (vorticityProgram.uniforms.dt) {
-        gl.uniform1f(vorticityProgram.uniforms.dt, dt);
-      }
-      blit(velocity.write);
-      velocity.swap();
-
-      // Divergence
       divergenceProgram.bind();
       if (divergenceProgram.uniforms.texelSize) {
         gl.uniform2f(
@@ -1115,7 +1044,6 @@ export default function SplashCursor({
       }
       blit(divergence);
 
-      // Clear pressure
       clearProgram.bind();
       if (clearProgram.uniforms.uTexture) {
         gl.uniform1i(clearProgram.uniforms.uTexture, pressure.read.attach(0));
@@ -1263,7 +1191,6 @@ export default function SplashCursor({
       blit(target, false);
     }
 
-    // -------------------- Interaction --------------------
     function splatPointer(pointer: Pointer) {
       const dx = pointer.deltaX * config.SPLAT_FORCE;
       const dy = pointer.deltaY * config.SPLAT_FORCE;
@@ -1472,7 +1399,6 @@ export default function SplashCursor({
       updatePointerMoveData(pointer, posX, posY, color);
     });
 
-    // Start rendering on first touch
     function handleFirstTouchStart(e: TouchEvent) {
       const touches = e.targetTouches;
       const pointer = pointers[0];
@@ -1521,7 +1447,6 @@ export default function SplashCursor({
         updatePointerUpData(pointer);
       }
     });
-    // ------------------------------------------------------------
   }, [
     SIM_RESOLUTION,
     DYE_RESOLUTION,

@@ -36,7 +36,11 @@ export const AuthForm = () => {
 
   return (
     <div className={"flex justify-center px-4 w-full"}>
-      <div className={"max-w-lg rounded-xl w-full"}>
+      <div
+        className={
+          "max-w-lg rounded-xl w-full pt-[132px] md:pt-36 xl:pt-[152px]"
+        }
+      >
         <div className={"w-full py-14 px-4 sm:px-6 md:px-9 lg:px-12 xl:px-16"}>
           <div className={"flex flex-col items-center gap-10 w-full md:gap-12"}>
             <FuzzyText baseIntensity={0.2} fontSize={40} hoverIntensity={0.4}>

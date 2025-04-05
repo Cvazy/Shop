@@ -14,7 +14,7 @@ export const Header = () => {
   return (
     <header
       className={
-        "fixed top-0 left-0 z-30 px-7 w-full h-[132px] sm:px-8 md:h-36 lg:px-10 xl:px-12 xl:h-[152px]"
+        "fixed top-0 left-0 z-20 px-7 w-full h-[132px] sm:px-8 md:h-36 lg:px-10 xl:px-12 xl:h-[152px]"
       }
     >
       <MobileMenu isOpen={isMobileMenuOpen} />

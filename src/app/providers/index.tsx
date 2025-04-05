@@ -27,7 +27,7 @@ export function Providers({ children }: PropsWithChildren) {
           sparkCount={8}
           duration={400}
         >
-          <SplashCursor />
+          {/*<SplashCursor />*/}
 
           {children}
         </ClickSparkProvider>

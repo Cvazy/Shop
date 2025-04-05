@@ -20,8 +20,7 @@ import {
 } from "@react-three/rapier";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
 import * as THREE from "three";
-
-import cardGLB from "@/../public/assets/card.glb";
+import { Vector2 } from "three";
 
 extend({ MeshLineGeometry, MeshLineMaterial });
 
@@ -113,7 +112,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
     linearDamping: 4,
   };
 
-  const { nodes, materials } = useGLTF(cardGLB) as any;
+  const { nodes, materials } = useGLTF("/assets/card.glb") as any;
   const texture = useTexture("/assets/lanyard.png");
   const [curve] = useState(
     () =>
@@ -127,21 +126,13 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
   const [dragged, drag] = useState<false | THREE.Vector3>(false);
   const [hovered, hover] = useState(false);
 
-  const [isSmall, setIsSmall] = useState<boolean>(() => {
-    if (typeof window !== "undefined") {
-      return window.innerWidth < 1024;
-    }
-    return false;
-  });
-
-  useEffect(() => {
-    const handleResize = (): void => {
-      setIsSmall(window.innerWidth < 1024);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return (): void => window.removeEventListener("resize", handleResize);
-  }, []);
+  const [resolution] = useState(
+    () =>
+      new Vector2(
+        typeof window !== "undefined" && window.innerWidth < 1024 ? 1000 : 1000,
+        1000,
+      ),
+  );
 
   useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
   useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
@@ -283,13 +274,14 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
       </group>
       <mesh ref={band}>
         <meshLineGeometry />
+
         <meshLineMaterial
           color="white"
           depthTest={false}
-          resolution={isSmall ? [1000, 2000] : [1000, 1000]}
-          useMap
+          resolution={resolution}
+          useMap={1}
           map={texture}
-          repeat={[-4, 1]}
+          repeat={new THREE.Vector2(-4, 1)}
           lineWidth={1}
         />
       </mesh>

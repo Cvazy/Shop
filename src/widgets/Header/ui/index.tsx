@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { GooeyNav, MobileMenu } from "@/widgets";
-import GlitchText from "@/components/GlitchText/GlitchText";
 import { useState } from "react";
 import { BurgerMenuButton } from "@/features";
+import { Logo } from "@/shared";
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
@@ -14,7 +14,7 @@ export const Header = () => {
   return (
     <header
       className={
-        "fixed top-0 left-0 z-20 px-7 w-full h-[132px] sm:px-8 md:h-36 lg:px-10 xl:px-12 xl:h-[152px]"
+        "absolute top-0 left-0 z-20 px-7 w-full h-[132px] sm:px-8 md:h-36 lg:px-10 xl:px-12 xl:h-[152px]"
       }
     >
       <MobileMenu isOpen={isMobileMenuOpen} />
@@ -24,12 +24,7 @@ export const Header = () => {
           <div className={"py-10 w-full"}>
             <div className={"flex items-center justify-between gap-5 w-full"}>
               <Link href={"/"}>
-                <GlitchText
-                  speed={4}
-                  className={"text-5xl font-semibold md:text-6xl xl:text-7xl"}
-                >
-                  alco
-                </GlitchText>
+                <Logo />
               </Link>
 
               <div className={"hidden lg:block"}>

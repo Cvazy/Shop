@@ -4,7 +4,7 @@ import { Providers } from "@/app/providers";
 
 import "./globals.css";
 import { Space_Grotesk } from "next/font/google";
-import { Header } from "@/widgets";
+import { Header, Footer } from "@/widgets";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -32,15 +32,17 @@ export default function RootLayout({
       <body>
         <Providers>
           <div
-            className={"flex justify-center min-h-dvh w-full h-max relative"}
+            className={
+              "flex flex-col justify-center min-h-dvh w-full h-max relative"
+            }
           >
             <Header />
 
-            <div className={"flex flex-grow w-full"}>
-              <main className={"w-full h-full"}>{children}</main>
+            <div className={"flex flex-grow min-h-dvh w-full"}>
+              <main className={"w-full"}>{children}</main>
             </div>
 
-            {/*Footer*/}
+            <Footer />
           </div>
         </Providers>
       </body>

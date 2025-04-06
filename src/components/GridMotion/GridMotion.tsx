@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, FC, useState } from "react";
 import { gsap } from "gsap";
-import Link from "next/link";
+import { Product } from "@/entities";
 
 interface GridMotionProps {
   items?: string[];
@@ -94,18 +94,12 @@ const GridMotion: FC<GridMotionProps> = ({
                 const content =
                   combinedItems[rowIndex * columnsCount + itemIndex];
                 return (
-                  <Link
-                    href={"/shop"}
+                  <div
                     key={`${rowIndex}-${itemIndex}`}
                     className="relative aspect-square w-full h-full md:min-w-72 xl:min-w-96"
                   >
-                    <div className="relative w-full h-full overflow-hidden rounded-[10px] bg-[#111] flex items-center justify-center text-white text-[1.5rem]">
-                      <div
-                        className="w-full h-full bg-cover bg-center absolute top-0 left-0"
-                        style={{ backgroundImage: `url(${content})` }}
-                      />
-                    </div>
-                  </Link>
+                    <Product />
+                  </div>
                 );
               })}
             </div>

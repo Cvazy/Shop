@@ -1,0 +1,3 @@
+.container canvas {
+    @apply rounded-xl lg:rounded-2xl
+}

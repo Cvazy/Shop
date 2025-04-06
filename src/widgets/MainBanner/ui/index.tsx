@@ -8,8 +8,8 @@ export const MainBanner = () => {
   ];
 
   return (
-    <div className={"flex justify-center items-center w-full h-dvh"}>
+    <section className={"flex justify-center items-center w-full h-dvh"}>
       <GridMotion items={items} />
-    </div>
+    </section>
   );
 };

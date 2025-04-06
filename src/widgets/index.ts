@@ -5,3 +5,4 @@ export * from "./GooeyNav";
 export * from "./MainBanner";
 export * from "./MobileMenu";
 export * from "./Navigation";
+export * from "./ProductsContainer";

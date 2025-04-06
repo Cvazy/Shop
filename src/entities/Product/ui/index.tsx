@@ -1,6 +1,5 @@
 import styles from "./Product.module.css";
 import Image from "next/image";
-import { Button } from "@/shared";
 import StarBorder from "@/components/StarBorder/StarBorder";
 import ShinyText from "@/components/ShinyText/ShinyText";
 import Link from "next/link";

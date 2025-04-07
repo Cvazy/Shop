@@ -23,10 +23,6 @@ export const Product = () => {
       className={`${styles.card} ${isActive ? styles.active : ""}`}
       onClick={handleCardClick}
     >
-      <div className={styles.wave}></div>
-      <div className={styles.wave}></div>
-      <div className={styles.wave}></div>
-
       <div className={styles.img}>
         <Image
           width={300}

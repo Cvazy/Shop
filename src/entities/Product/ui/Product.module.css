@@ -14,46 +14,6 @@
     box-shadow: 0 8px 28px -9px rgba(0,0,0,0.45);
 }
 
-.wave {
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    opacity: 0.6;
-    left: 0;
-    top: 0;
-    margin-left: -50%;
-    margin-top: -70%;
-    background: linear-gradient(744deg, #000000, #333333 60%, #8d8d8d);
-    border-radius: 40%;
-    animation: wave 55s infinite linear;
-}
-
-.wave:nth-child(2),
-.wave:nth-child(3) {
-    top: 210px;
-}
-
-.card .wave {
-    border-radius: 40%;
-    animation: wave 3000ms infinite linear;
-}
-
-.card .wave:nth-child(2) {
-    animation-duration: 4000ms;
-}
-
-.card:nth-child(2) {
-    animation-duration: 50s;
-}
-
-.card .wave:nth-child(3) {
-    animation-duration: 5000ms;
-}
-
-.card:nth-child(3) {
-    animation-duration: 45s;
-}
-
 .img {
     height: 50%;
     position: absolute;
@@ -120,12 +80,3 @@
     transform: scale(1.04) rotate(-1deg);
 }
 
-@keyframes wave {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}

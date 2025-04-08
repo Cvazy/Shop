@@ -13,10 +13,11 @@ interface IInputProps
     DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
   > {
   label?: string;
+  error?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, IInputProps>(
-  ({ label, type = "text", ...props }, ref) => {
+  ({ error, label, type = "text", ...props }, ref) => {
     const [isInputFocus, setIsInputFocus] = useState<boolean>(false);
     const [inputType, setInputType] = useState<string>("password");
 
@@ -26,8 +27,12 @@ export const Input = forwardRef<HTMLInputElement, IInputProps>(
 
     return (
       <div className={styles.inputContainer}>
+        {error && error?.length > 0 && (
+          <p className={styles.errorMessage}>{error}</p>
+        )}
+
         <input
-          className={`${styles.input} ${type === "password" ? "pr-12" : "pr-3"}`}
+          className={`${styles.input} ${error && error?.length > 0 ? styles.error : ""} ${type === "password" ? "pr-12" : "pr-3"}`}
           type={type === "password" ? inputType : type}
           ref={ref}
           placeholder={`${label}...`}

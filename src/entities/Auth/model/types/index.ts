@@ -5,7 +5,11 @@ export interface IAuthForm {
   password: string;
 }
 
+export type AuthFormType = IAuthForm & {
+  password_repeat?: string;
+};
+
 export interface IAuthResponse {
-  accessToken: string;
+  access: string;
   user: IUser;
 }

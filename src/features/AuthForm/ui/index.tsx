@@ -1,12 +1,12 @@
 "use client";
 
 import { SubmitHandler, useForm } from "react-hook-form";
-import { authService, IAuthForm } from "@/entities";
+import { authService, AuthFormType } from "@/entities";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button, Input, Switcher } from "@/shared";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FuzzyText from "@/components/FuzzyText/FuzzyText";
 
 export const AuthForm = () => {
@@ -14,12 +14,22 @@ export const AuthForm = () => {
 
   const router = useRouter();
 
-  const { register, handleSubmit, reset } = useForm<IAuthForm>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    formState: { errors },
+  } = useForm<AuthFormType>({
     mode: "onChange",
   });
 
+  useEffect(() => {
+    reset();
+  }, [isLoginForm, reset]);
+
   const { mutate } = useMutation({
-    mutationFn: (data: IAuthForm) =>
+    mutationFn: (data: AuthFormType) =>
       authService.main(isLoginForm ? "login" : "register", data),
     onSuccess: () => {
       toast.success(
@@ -30,9 +40,12 @@ export const AuthForm = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<IAuthForm> = (data) => {
+  const onSubmit: SubmitHandler<AuthFormType> = (data) => {
     mutate(data);
   };
+
+  const errorCount = Object.keys(errors).length;
+  const hasErrors = errorCount > 0;
 
   return (
     <div className={"flex justify-center px-4 w-full"}>
@@ -47,20 +60,42 @@ export const AuthForm = () => {
               onSubmit={handleSubmit(onSubmit)}
               className={"flex flex-col items-center gap-6 w-full"}
             >
-              <Input
-                label={"Email"}
-                {...register("email", { required: "Email is required" })}
-              />
+              <div
+                className={`flex flex-col ${!hasErrors ? "gap-6" : "gap-10"} w-full`}
+              >
+                <Input
+                  label={"Email"}
+                  error={errors.email?.message}
+                  {...register("email", { required: "Email is required" })}
+                />
 
-              <Input
-                label={"Password"}
-                type={"password"}
-                {...register("password", {
-                  required: "Password is required",
-                })}
-              />
+                <Input
+                  label={"Password"}
+                  type={"password"}
+                  error={errors.password?.message}
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
+                />
 
-              <Button text={isLoginForm ? "Login" : "Registration"} />
+                {!isLoginForm && (
+                  <Input
+                    label={"Password repeat"}
+                    type={"password"}
+                    error={errors.password_repeat?.message}
+                    {...register("password_repeat", {
+                      required: "Please confirm your password",
+                      validate: (value) =>
+                        value === getValues("password") ||
+                        "Passwords do not match",
+                    })}
+                  />
+                )}
+              </div>
+
+              <button type={"submit"} className={"w-full"}>
+                <Button text={isLoginForm ? "Login" : "Registration"} />
+              </button>
 
               <div
                 className={

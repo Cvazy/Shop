@@ -40,6 +40,11 @@ input, textarea {
   outline: none;
 }
 
+input::-moz-focus-inner,
+textarea::-moz-focus-inner {
+  border: 0 !important;
+}
+
 textarea {
   transition-property: none;
 }

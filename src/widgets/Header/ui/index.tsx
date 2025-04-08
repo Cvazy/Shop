@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { HeaderNav, MobileMenu } from "@/widgets";
 import { useState } from "react";
-import { BurgerMenuButton } from "@/features";
+import { BurgerMenuButton, ProfileMenu } from "@/features";
 import { Logo } from "@/shared";
 
 export const Header = () => {
@@ -27,21 +27,27 @@ export const Header = () => {
                 <Logo />
               </Link>
 
-              <div className={"hidden lg:block"}>
-                <HeaderNav
-                  items={[
-                    { label: "Home", href: "/" },
-                    { label: "Shop", href: "/shop" },
-                    { label: "About", href: "/about" },
-                  ]}
-                />
-              </div>
+              <div className={"flex items-center gap-10 flex-nowrap"}>
+                <div className={"hidden lg:block"}>
+                  <HeaderNav
+                    items={[
+                      { label: "Home", href: "/" },
+                      { label: "Shop", href: "/shop" },
+                      { label: "About", href: "/about" },
+                    ]}
+                  />
+                </div>
 
-              <div className={"block lg:hidden"}>
-                <BurgerMenuButton
-                  isOpen={isMobileMenuOpen}
-                  onClick={toggleMenu}
-                />
+                <div className={"flex items-center gap-4 flex-nowrap"}>
+                  <ProfileMenu />
+
+                  <div className={"block lg:hidden"}>
+                    <BurgerMenuButton
+                      isOpen={isMobileMenuOpen}
+                      onClick={toggleMenu}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

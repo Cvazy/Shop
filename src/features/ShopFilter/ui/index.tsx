@@ -1,4 +1,5 @@
 import LiquidChrome from "@/components/LiquidChrome/LiquidChrome";
+import { InputWithLabel } from "@/shared";
 
 export const ShopFilter = () => {
   return (
@@ -12,10 +13,18 @@ export const ShopFilter = () => {
         speed={1}
         amplitude={0.6}
         interactive={true}
-        className={"hidden rounded-xl opacity-20 lg:block lg:rounded-2xl"}
+        className={
+          "hidden rounded-xl opacity-20 absolute inset-0 lg:block lg:rounded-2xl"
+        }
       />
 
-      <div className={"relative z-10 w-full h-full"}></div>
+      <div className={"relative z-10 w-full h-full"}>
+        <div className={"flex flex-col gap-6 p-4 w-full"}>
+          <InputWithLabel />
+
+          <div></div>
+        </div>
+      </div>
     </div>
   );
 };

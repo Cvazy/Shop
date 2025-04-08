@@ -13,8 +13,6 @@ export const Navigation = ({ toggleMenu }: { toggleMenu: () => void }) => {
         <NavItem toggleMenu={toggleMenu} text={"Contact"} link={"/contact"} />
 
         <NavItem toggleMenu={toggleMenu} text={"Shop"} link={"/shop"} />
-
-        <NavItem toggleMenu={toggleMenu} text={"Authorize"} link={"/auth"} />
       </ul>
     </nav>
   );

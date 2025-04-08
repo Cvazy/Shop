@@ -1,3 +1,5 @@
+"use client";
+
 import styles from "./Product.module.css";
 import Image from "next/image";
 import StarBorder from "@/components/StarBorder/StarBorder";

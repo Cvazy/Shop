@@ -96,7 +96,7 @@ const GridMotion: FC<GridMotionProps> = ({
                 return (
                   <div
                     key={`${rowIndex}-${itemIndex}`}
-                    className="relative w-full h-full md:min-w-72 xl:min-w-96"
+                    className="relative w-full h-full aspect-square"
                   >
                     <Product />
                   </div>

@@ -8,8 +8,11 @@ import { Button, Input, Switcher } from "@/shared";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import FuzzyText from "@/components/FuzzyText/FuzzyText";
+import { useStore } from "@/app/providers/StoreProvider";
 
 export const AuthForm = () => {
+  const { authStore } = useStore();
+
   const [isLoginForm, setIsLoginForm] = useState<boolean>(true);
 
   const router = useRouter();
@@ -31,11 +34,13 @@ export const AuthForm = () => {
   const { mutate } = useMutation({
     mutationFn: (data: AuthFormType) =>
       authService.main(isLoginForm ? "login" : "register", data),
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success(
         `Вы успешно ${isLoginForm ? "вошли в систему" : "зарегистрировали нового пользователя"}!`,
       );
       reset();
+
+      authStore.checkAuth();
       router.replace("/");
     },
   });

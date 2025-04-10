@@ -6,9 +6,16 @@ import { useEffect, useState } from "react";
 export const useAuth = () => {
   const [isAuth, setIsAuth] = useState(false);
 
-  useEffect(() => {
+  const updateAuth = () => {
     setIsAuth(!!getAccessToken());
+  };
+
+  useEffect(() => {
+    updateAuth();
+
+    window.addEventListener("focus", updateAuth);
+    return () => window.removeEventListener("focus", updateAuth);
   }, []);
 
-  return isAuth;
+  return { isAuth, updateAuth };
 };

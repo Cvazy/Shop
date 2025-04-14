@@ -1,24 +1,43 @@
+"use client";
+
 import styles from "./ShopItem.module.css";
-import Image from "next/image";
 import ShinyText from "@/components/ShinyText/ShinyText";
 import StarBorder from "@/components/StarBorder/StarBorder";
+import { formatNumberWithDots, IProduct } from "@/entities";
+import { useEffect, useState } from "react";
+import { CustomImage, extractMediaPath, imageLoader } from "@/shared";
 
-export const ShopItem = () => {
-  const getRandomValue = () => Math.floor(Math.random() * 20 + 5);
-  const getRandomMultiplier = () => (Math.random() * 1.5 + 0.5).toFixed(1);
+export const ShopItem = ({ product_name, images, price }: IProduct) => {
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const getValues = (index: number) => {
+    if (!isMounted) return { i: 1, j: 1 };
+
+    return {
+      i: Math.floor(Math.random() * 20 + 5),
+      j: (Math.random() * 1.5 + 0.5).toFixed(1),
+    };
+  };
 
   return (
     <div className={styles.card}>
-      {[...Array(10)].map((_, index) => (
-        <div
-          key={index}
-          style={{
-            "--i": getRandomValue(),
-            "--j": getRandomMultiplier(),
-          }}
-          className={styles.blub}
-        />
-      ))}
+      {[...Array(10)].map((_, index) => {
+        const values = getValues(index);
+        return (
+          <div
+            key={index}
+            style={{
+              "--i": values.i,
+              "--j": values.j,
+            }}
+            className={styles.blub}
+          />
+        );
+      })}
 
       <div className={"p-4 w-full xl:p-6"}>
         <div className={"flex flex-col items-start gap-6 w-full"}>
@@ -27,11 +46,12 @@ export const ShopItem = () => {
               "flex justify-center max-w-1/2 aspect-square relative z-10 w-full"
             }
           >
-            <Image
+            <CustomImage
               width={200}
               height={200}
-              src={"/products/item2.png"}
-              alt={"Product Item 2"}
+              src={extractMediaPath(images[0].image)}
+              alt={images[0].alt_text}
+              loader={imageLoader}
               loading={"lazy"}
               draggable={false}
               className={"w-auto h-full"}
@@ -41,7 +61,7 @@ export const ShopItem = () => {
           <div className={"flex flex-col items-center gap-4 w-full"}>
             <div className={"flex flex-col items-start gap-1 w-full"}>
               <ShinyText
-                text={"Jack Daniels"}
+                text={product_name}
                 className={"font-semibold text-xl md:text-2xl"}
                 disabled={false}
                 speed={3}
@@ -65,7 +85,7 @@ export const ShopItem = () => {
                   "text-[#b5b5b5a4] text-left text-base font-medium whitespace-nowrap md:text-lg"
                 }
               >
-                3.654 ₽
+                {formatNumberWithDots(price)} ₽
               </p>
 
               <StarBorder className={"w-fit"} textClassName={"!py-2.5"}>

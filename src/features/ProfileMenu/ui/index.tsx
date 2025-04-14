@@ -1,18 +1,23 @@
-import { useAuth } from "@/shared";
 import { useMutation } from "@tanstack/react-query";
-import { authService } from "@/entities";
+import { authActions, authService } from "@/entities";
 import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
 
 import styles from "./ProfileMenu.module.css";
+import {
+  useAppDispatch,
+  useAppSelector,
+} from "@/app/providers/StoreProviders/hooks";
 
 export const ProfileMenu = () => {
-  const isAuth = useAuth();
+  const dispatch = useAppDispatch();
+  const { isAuth } = useAppSelector((state) => state.auth);
 
   const { mutate } = useMutation({
     mutationFn: () => authService.logout(),
     onSuccess: () => {
+      dispatch(authActions.setAuthData(false));
       toast.success("Вы успешно вышли из системы!");
     },
   });
@@ -55,7 +60,20 @@ export const ProfileMenu = () => {
           </button>
         </div>
       ) : (
-        <div></div>
+        <Link href={"/auth"}>
+          <button className={styles.Login}>
+            <Image
+              width={24}
+              height={24}
+              src={"/icons/login.svg"}
+              alt={"Login"}
+              loading={"lazy"}
+              draggable={false}
+            />
+
+            <span>Login</span>
+          </button>
+        </Link>
       )}
     </>
   );

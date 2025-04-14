@@ -1,0 +1,6 @@
+.bg {
+    background-size: cover;
+    background: url("../../../public/backgrounds/auth.png") no-repeat center;
+    width: 100%;
+    height: 100%;
+}

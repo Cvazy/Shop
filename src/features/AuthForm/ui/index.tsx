@@ -1,18 +1,21 @@
 "use client";
 
 import { SubmitHandler, useForm } from "react-hook-form";
-import { authService, AuthFormType } from "@/entities";
+import { authService, AuthFormType, authActions } from "@/entities";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button, Input, Switcher } from "@/shared";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import FuzzyText from "@/components/FuzzyText/FuzzyText";
+import { useAppDispatch } from "@/app/providers/StoreProviders/hooks";
 
 export const AuthForm = () => {
   const [isLoginForm, setIsLoginForm] = useState<boolean>(true);
 
   const router = useRouter();
+
+  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -36,6 +39,7 @@ export const AuthForm = () => {
         `Вы успешно ${isLoginForm ? "вошли в систему" : "зарегистрировали нового пользователя"}!`,
       );
       reset();
+      dispatch(authActions.setAuthData(true));
       router.replace("/");
     },
   });

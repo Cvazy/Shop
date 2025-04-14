@@ -12,7 +12,6 @@ export const ShopFilter = () => {
         baseColor={[0.1, 0.1, 0.1]}
         speed={1}
         amplitude={0.6}
-        interactive={true}
         className={
           "hidden rounded-xl opacity-20 absolute inset-0 lg:block lg:rounded-2xl"
         }

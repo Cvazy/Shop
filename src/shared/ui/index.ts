@@ -1,4 +1,5 @@
 export * from "./Button";
+export * from "./CustomImage";
 export * from "./ClickSpark";
 export * from "./Loader";
 export * from "./Logo";

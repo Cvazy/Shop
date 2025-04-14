@@ -1,6 +1,6 @@
 import { IAuthResponse, AuthFormType } from "@/entities";
 import { axiosClassic } from "@/app/api";
-import { removeFromStorage, saveTokenStorage } from "@/shared";
+import { rootStore } from "@/app/providers/StoreProvider";
 
 export const authService = {
   async main(type: "login" | "register", data: AuthFormType) {
@@ -9,7 +9,9 @@ export const authService = {
       data,
     );
 
-    if (response.data.access) saveTokenStorage(response.data.access);
+    if (response.data.access) {
+      rootStore.authStore.setAuth(response.data.access);
+    }
 
     return response;
   },
@@ -17,7 +19,9 @@ export const authService = {
   async getNewTokens() {
     const response = await axiosClassic.post("/auth/login/refresh/");
 
-    if (response.data.access) saveTokenStorage(response.data.access);
+    if (response.data.access) {
+      rootStore.authStore.setAuth(response.data.access);
+    }
 
     return response;
   },
@@ -25,7 +29,9 @@ export const authService = {
   async logout() {
     const response = await axiosClassic.post("/auth/logout/");
 
-    if (response.data) removeFromStorage();
+    if (response.data) {
+      rootStore.authStore.logout();
+    }
 
     return response;
   },

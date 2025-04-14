@@ -6,6 +6,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { usePathname } from "next/navigation";
 import { ClickSparkProvider, Loader } from "@/shared";
 import Particles from "@/components/Particles/Particles";
+import { Provider } from "react-redux";
+import { store } from "@/app/providers/StoreProviders/store";
 
 export function Providers({ children }: PropsWithChildren) {
   const [client] = useState(
@@ -13,6 +15,8 @@ export function Providers({ children }: PropsWithChildren) {
       defaultOptions: {
         queries: {
           refetchOnWindowFocus: false,
+          staleTime: 5 * 60 * 1000,
+          gcTime: 60 * 60 * 1000,
         },
       },
     }),
@@ -30,7 +34,6 @@ export function Providers({ children }: PropsWithChildren) {
   useEffect(() => {
     setIsLoading(true);
 
-    // Очищаем предыдущий таймер
     if (timeoutRef.current !== undefined) {
       window.clearTimeout(timeoutRef.current);
     }
@@ -47,33 +50,36 @@ export function Providers({ children }: PropsWithChildren) {
   }, [pathname]);
 
   return (
-    <QueryClientProvider client={client}>
-      <ClickSparkProvider
-        sparkColor="#fff"
-        sparkSize={10}
-        sparkRadius={15}
-        sparkCount={8}
-        duration={400}
-      >
-        <div className={"absolute inset-0 z-[1]"}>
-          <Particles
-            particleColors={["#ffffff", "#ffffff"]}
-            particleCount={200}
-            particleSpread={10}
-            speed={0.1}
-            particleBaseSize={100}
-            moveParticlesOnHover={true}
-            alphaParticles={false}
-            disableRotation={false}
-            className={"bg-black"}
-          />
-        </div>
+    <Provider store={store}>
+      <QueryClientProvider client={client}>
+        <ClickSparkProvider
+          sparkColor="#fff"
+          sparkSize={10}
+          sparkRadius={15}
+          sparkCount={8}
+          duration={400}
+        >
+          <div className={"absolute inset-0 z-[1]"}>
+            <Particles
+              particleColors={["#ffffff", "#ffffff"]}
+              particleCount={200}
+              particleSpread={10}
+              speed={0.1}
+              particleBaseSize={100}
+              moveParticlesOnHover={true}
+              alphaParticles={false}
+              disableRotation={false}
+              className={"bg-black"}
+            />
+          </div>
 
-        {isLoading && <Loader />}
+          {isLoading && <Loader />}
 
-        {children}
-      </ClickSparkProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+          {children}
+        </ClickSparkProvider>
+
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </Provider>
   );
 }

@@ -4,10 +4,13 @@ import { PropsWithChildren, useEffect, useState, useRef } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { usePathname } from "next/navigation";
-import { ClickSparkProvider, Loader } from "@/shared";
+import { ClickSparkProvider, getAccessToken, Loader } from "@/shared";
 import Particles from "@/components/Particles/Particles";
 import { Provider } from "react-redux";
 import { store } from "@/app/providers/StoreProviders/store";
+import { useAppDispatch } from "@/app/providers/StoreProviders/hooks";
+import { authActions } from "@/entities";
+import { AuthProvider } from "@/app/providers/AuthProvider";
 
 export function Providers({ children }: PropsWithChildren) {
   const [client] = useState(
@@ -51,35 +54,37 @@ export function Providers({ children }: PropsWithChildren) {
 
   return (
     <Provider store={store}>
-      <QueryClientProvider client={client}>
-        <ClickSparkProvider
-          sparkColor="#fff"
-          sparkSize={10}
-          sparkRadius={15}
-          sparkCount={8}
-          duration={400}
-        >
-          <div className={"absolute inset-0 z-[1]"}>
-            <Particles
-              particleColors={["#ffffff", "#ffffff"]}
-              particleCount={200}
-              particleSpread={10}
-              speed={0.1}
-              particleBaseSize={100}
-              moveParticlesOnHover={true}
-              alphaParticles={false}
-              disableRotation={false}
-              className={"bg-black"}
-            />
-          </div>
+      <AuthProvider>
+        <QueryClientProvider client={client}>
+          <ClickSparkProvider
+            sparkColor="#fff"
+            sparkSize={10}
+            sparkRadius={15}
+            sparkCount={8}
+            duration={400}
+          >
+            <div className={"absolute inset-0 z-[1]"}>
+              <Particles
+                particleColors={["#ffffff", "#ffffff"]}
+                particleCount={200}
+                particleSpread={10}
+                speed={0.1}
+                particleBaseSize={100}
+                moveParticlesOnHover={true}
+                alphaParticles={false}
+                disableRotation={false}
+                className={"bg-black"}
+              />
+            </div>
 
-          {isLoading && <Loader />}
+            {isLoading && <Loader />}
 
-          {children}
-        </ClickSparkProvider>
+            {children}
+          </ClickSparkProvider>
 
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </AuthProvider>
     </Provider>
   );
 }

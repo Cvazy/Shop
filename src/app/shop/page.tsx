@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { ProductsContainer } from "@/widgets";
 import { ShopFilter } from "@/features";
+import { ShopContent } from "@/app/shop/ShopContent";
 
 export const metadata: Metadata = {
   title: "Shop",
@@ -17,12 +18,10 @@ const ShopPage = () => {
         <div className={"max-w-limit py-8 w-full md:py-10 xl:py-14"}>
           <div
             className={
-              "flex flex-col items-center gap-4 w-full lg:grid lg:grid-cols-4 lg:gap-6 xl:gap-8"
+              "flex flex-col items-start gap-4 w-full lg:grid lg:grid-cols-4 lg:gap-6 xl:gap-8"
             }
           >
-            <ShopFilter />
-
-            <ProductsContainer />
+            <ShopContent />
           </div>
         </div>
       </div>

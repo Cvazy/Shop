@@ -1,8 +1,8 @@
 .checkboxWrapper {
-    --checkbox-size: 25px;
-    --checkbox-color: #01129d;
-    --checkbox-shadow: rgba(0, 34, 255, 0.3);
-    --checkbox-border: rgba(6, 45, 197, 0.7);
+    --checkbox-size: 20px;
+    --checkbox-color: #010d44;
+    --checkbox-shadow: rgba(0, 21, 255, 0.3);
+    --checkbox-border: rgba(12, 68, 175, 0.7);
     display: flex;
     align-items: center;
     position: relative;
@@ -20,11 +20,11 @@
 
 .checkboxWrapper .checkmark {
     position: relative;
-    width: var(--checkbox-size);
-    height: var(--checkbox-size);
+    width: 20px;
+    height: 20px;
     border: 2px solid var(--checkbox-border);
     border-radius: 8px;
-    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1); /* Используем более плавный кубический безе */
+    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -38,9 +38,9 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(45deg, var(--checkbox-color), #00ffcc);
+    background: linear-gradient(45deg, var(--checkbox-color), #008cff);
     opacity: 0;
-    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1); /* Используем более плавный кубический безе */
+    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     transform: scale(0) rotate(-45deg);
 }
 
@@ -49,19 +49,18 @@
     transform: scale(1) rotate(0);
 }
 
-.checkboxWrapper .checkmark svg {
+.checkboxWrapper .checkmark img {
     width: 0;
     height: 0;
     color: #1a1a1a;
     z-index: 1;
-    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1); /* Используем более плавный кубический безе */
+    transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
 }
 
-.checkboxWrapper input:checked ~ .checkmark svg {
-    width: 18px;
-    height: 18px;
-    /* transform: rotate(360deg); <-- УДАЛЕНО */
+.checkboxWrapper input:checked ~ .checkmark img {
+    width: 14px;
+    height: 14px;
 }
 
 .checkboxWrapper:hover .checkmark {
@@ -71,7 +70,7 @@
             0 0 20px var(--checkbox-shadow),
             0 0 40px var(--checkbox-shadow),
             inset 0 0 10px var(--checkbox-shadow);
-    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); /* Добавляем плавный переход */
+    transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .checkboxWrapper input:checked ~ .checkmark {
@@ -81,28 +80,31 @@
 @keyframes pulse {
     0% {
         transform: scale(1);
-        box-shadow: 0 0 15px var(--checkbox-shadow); /* Уменьшаем начальный бокс-шадоу */
+        box-shadow: 0 0 15px var(--checkbox-shadow);
     }
     50% {
-        transform: scale(0.95); /* Меняем значение для более плавного эффекта */
+        transform: scale(0.95);
         box-shadow:
                 0 0 25px var(--checkbox-shadow),
                 0 0 40px var(--checkbox-shadow);
     }
     100% {
         transform: scale(1);
-        box-shadow: 0 0 15px var(--checkbox-shadow); /* Уменьшаем конечный бокс-шадоу */
+        box-shadow: 0 0 15px var(--checkbox-shadow);
     }
 }
 
 .checkboxWrapper .label {
     margin-left: 15px;
-    font-family: "Segoe UI", sans-serif;
-    color: var(--checkbox-color);
-    font-size: 18px;
+    font-size: 14px;
+    color: white;
     text-shadow: 0 0 10px var(--checkbox-shadow);
     opacity: 0.9;
-    transition: all 0.3s ease; /* Используем стандартное easing */
+    transition: all 0.3s ease;
+
+    @media (max-width: 1024px) {
+        font-size: 12px;
+    }
 }
 
 .checkboxWrapper:hover .label {
@@ -110,7 +112,6 @@
     transform: translateX(5px);
 }
 
-/* Glowing dots animation */
 .checkboxWrapper::after,
 .checkboxWrapper::before {
     content: "";
@@ -118,29 +119,29 @@
     width: 4px;
     height: 4px;
     border-radius: 50%;
-    background: var(--checkbox-color);
+    background: #2750d5;
     opacity: 0;
-    transition: all 0.5s ease; /* Используем стандартное easing */
+    transition: all 0.5s ease;
 }
 
 .checkboxWrapper::before {
-    left: -10px;
+    left: -4px;
     top: 50%;
 }
 
 .checkboxWrapper::after {
-    right: -10px;
+    right: -4px;
     top: 50%;
 }
 
 .checkboxWrapper:hover::before {
     opacity: 1;
-    transform: translateX(-10px);
+    transform: translateX(-7px);
     box-shadow: 0 0 10px var(--checkbox-color);
 }
 
 .checkboxWrapper:hover::after {
     opacity: 1;
-    transform: translateX(10px);
+    transform: translateX(7px);
     box-shadow: 0 0 10px var(--checkbox-color);
 }

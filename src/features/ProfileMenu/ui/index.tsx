@@ -12,6 +12,7 @@ import {
 
 export const ProfileMenu = () => {
   const dispatch = useAppDispatch();
+
   const { isAuth } = useAppSelector((state) => state.auth);
 
   const { mutate } = useMutation({

@@ -3,11 +3,16 @@
 import styles from "./ShopItem.module.css";
 import ShinyText from "@/components/ShinyText/ShinyText";
 import StarBorder from "@/components/StarBorder/StarBorder";
-import { formatNumberWithDots, IProduct } from "@/entities";
+import { formatNumberWithDots, IProductEnhanced } from "@/entities";
 import { useEffect, useState } from "react";
 import { CustomImage, extractMediaPath, imageLoader } from "@/shared";
 
-export const ShopItem = ({ product_name, images, price }: IProduct) => {
+export const ShopItem = ({
+  product_name,
+  images,
+  price,
+  typeName,
+}: IProductEnhanced) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
@@ -68,7 +73,7 @@ export const ShopItem = ({ product_name, images, price }: IProduct) => {
               />
 
               <ShinyText
-                text={"Whisky"}
+                text={typeName}
                 className={"text-sm md:text-base"}
                 disabled={false}
                 speed={3}

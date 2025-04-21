@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, FC, useState } from "react";
 import { gsap } from "gsap";
-import { Product } from "@/entities";
+import { IProductEnhanced, Product } from "@/entities";
 
 interface GridMotionProps {
-  items?: string[];
+  items?: IProductEnhanced[];
   gradientColor?: string;
 }
 
@@ -22,8 +22,7 @@ const GridMotion: FC<GridMotionProps> = ({
   const columnsCount = 12;
   const totalItems = rowsCount * columnsCount;
 
-  // Дублируем элементы для заполнения сетки
-  const combinedItems = items.length
+  const combinedItems: IProductEnhanced[] = items.length
     ? Array.from({ length: totalItems }, (_, i) => items[i % items.length])
     : Array.from({ length: totalItems }, (_, i) => "");
 
@@ -93,12 +92,13 @@ const GridMotion: FC<GridMotionProps> = ({
               {Array.from({ length: columnsCount }).map((_, itemIndex) => {
                 const content =
                   combinedItems[rowIndex * columnsCount + itemIndex];
+
                 return (
                   <div
                     key={`${rowIndex}-${itemIndex}`}
                     className="relative w-full h-full aspect-square"
                   >
-                    <Product />
+                    <Product {...content} />
                   </div>
                 );
               })}

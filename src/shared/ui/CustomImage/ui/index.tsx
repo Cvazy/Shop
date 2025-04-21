@@ -18,8 +18,8 @@ export const CustomImage: FC<CustomImageProps> = memo(
         )}
         <Image
           {...props}
-          src={src}
-          alt={alt}
+          src={src || ""}
+          alt={alt || ""}
           className={`${className} transition-opacity duration-500 ${
             isLoading ? "opacity-0" : "opacity-100"
           }`}

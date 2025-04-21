@@ -1,4 +1,5 @@
 export * from "./Button";
+export * from "./Checkbox";
 export * from "./CustomImage";
 export * from "./ClickSpark";
 export * from "./Loader";

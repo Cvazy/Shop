@@ -1,13 +1,19 @@
 "use client";
 
 import styles from "./Product.module.css";
-import Image from "next/image";
 import StarBorder from "@/components/StarBorder/StarBorder";
 import ShinyText from "@/components/ShinyText/ShinyText";
 import Link from "next/link";
 import { useState } from "react";
+import { formatNumberWithDots, IProductEnhanced } from "@/entities";
+import { CustomImage, extractMediaPath, imageLoader } from "@/shared";
 
-export const Product = () => {
+export const Product = ({
+  product_name,
+  images,
+  price,
+  typeName,
+}: IProductEnhanced) => {
   const [isActive, setIsActive] = useState(false);
 
   const handleCardClick = () => {
@@ -26,11 +32,12 @@ export const Product = () => {
       onClick={handleCardClick}
     >
       <div className={styles.img}>
-        <Image
+        <CustomImage
           width={300}
           height={300}
-          src={"/products/item2.png"}
-          alt={"Product"}
+          src={extractMediaPath(images[0].image)}
+          alt={images[0].alt_text}
+          loader={imageLoader}
           loading={"lazy"}
           draggable={false}
           className={"w-full h-full"}
@@ -38,11 +45,13 @@ export const Product = () => {
       </div>
 
       <div className={styles.textBox}>
-        <p className={`${styles.text} ${styles.head}`}>Jack Daniels</p>
+        <p className={`${styles.text} ${styles.head}`}>{product_name}</p>
 
-        <span>Whisky</span>
+        <span>{typeName}</span>
 
-        <p className={`${styles.text} ${styles.price}`}>3.654 ₽</p>
+        <p className={`${styles.text} ${styles.price}`}>
+          {formatNumberWithDots(price)} ₽
+        </p>
 
         <Link href={"/shop"} className={"w-full"}>
           <StarBorder className={"w-full"} textClassName={"!py-2.5"}>

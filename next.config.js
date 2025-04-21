@@ -1,6 +1,6 @@
 module.exports = {
   reactStrictMode: true,
-  output: "export",
+  // output: "export",
   webpack: (config) => {
     config.module.rules.push({
       test: /\.(glb|gltf)$/,

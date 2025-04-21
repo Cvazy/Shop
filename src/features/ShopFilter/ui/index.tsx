@@ -6,7 +6,7 @@ import { IFiltersResponse } from "@/entities";
 import { ChangeEvent, useState } from "react";
 
 interface IShopFilterProps {
-  filtersData: IFiltersResponse;
+  filtersData: IFiltersResponse | undefined;
   selectedSegments: Set<number>;
   selectedTypes: Set<number>;
   toggleFilter: (type: "type" | "segment", id: number) => void;

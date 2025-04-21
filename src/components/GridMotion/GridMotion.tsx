@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, FC, useState } from "react";
+import { useEffect, useRef, FC, useState, useMemo, memo } from "react";
 import { gsap } from "gsap";
 import { IProductEnhanced, Product } from "@/entities";
 
@@ -17,17 +17,23 @@ const GridMotion: FC<GridMotionProps> = ({
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mouseXRef = useRef<number>(0);
   const [isMounted, setIsMounted] = useState(false);
+  const rowAnimations = useRef<any[]>([]);
 
   const rowsCount = 4;
   const columnsCount = 12;
   const totalItems = rowsCount * columnsCount;
 
-  const combinedItems: IProductEnhanced[] = items.length
-    ? Array.from({ length: totalItems }, (_, i) => items[i % items.length])
-    : Array.from({ length: totalItems }, (_, i) => "");
+  const combinedItems = useMemo(
+    () =>
+      items.length
+        ? Array.from({ length: totalItems }, (_, i) => items[i % items.length])
+        : Array.from({ length: totalItems }, () => ""),
+    [items, totalItems],
+  );
 
   useEffect(() => {
     setIsMounted(true);
+    rowRefs.current = Array(rowsCount).fill(null);
     mouseXRef.current = window.innerWidth / 2;
 
     gsap.ticker.lagSmoothing(0);
@@ -36,29 +42,36 @@ const GridMotion: FC<GridMotionProps> = ({
       mouseXRef.current = e.clientX;
     };
 
+    const baseDuration = 0.8;
+    const inertiaFactors = [0.6, 0.4, 0.3, 0.2];
+
     const updateMotion = () => {
       const maxMoveAmount = 300;
-      const baseDuration = 0.8;
-      const inertiaFactors = [0.6, 0.4, 0.3, 0.2];
 
       rowRefs.current.forEach((row, index) => {
-        if (row) {
-          const direction = index % 2 === 0 ? 1 : -1;
-          const moveAmount =
-            ((mouseXRef.current / window.innerWidth) * maxMoveAmount -
-              maxMoveAmount / 2) *
-            direction;
+        if (!row || !rowAnimations.current[index]) return;
 
-          gsap.to(row, {
-            x: moveAmount,
-            duration:
-              baseDuration + inertiaFactors[index % inertiaFactors.length],
-            ease: "power3.out",
-            overwrite: "auto",
-          });
-        }
+        const direction = index % 2 === 0 ? 1 : -1;
+        const moveAmount =
+          ((mouseXRef.current / window.innerWidth) * maxMoveAmount -
+            maxMoveAmount / 2) *
+          direction;
+
+        rowAnimations.current[index](moveAmount);
       });
     };
+
+    setTimeout(() => {
+      rowAnimations.current = rowRefs.current.map((row, index) =>
+        row
+          ? gsap.quickTo(row, "x", {
+              duration:
+                baseDuration + inertiaFactors[index % inertiaFactors.length],
+              ease: "power3.out",
+            })
+          : () => {},
+      );
+    }, 0);
 
     const removeAnimationLoop = gsap.ticker.add(updateMotion);
     window.addEventListener("mousemove", handleMouseMove);
@@ -66,6 +79,13 @@ const GridMotion: FC<GridMotionProps> = ({
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       removeAnimationLoop();
+
+      rowAnimations.current.forEach((animation) => {
+        if (animation && typeof animation.revert === "function") {
+          animation.revert();
+        }
+      });
+      rowAnimations.current = [];
     };
   }, []);
 
@@ -84,28 +104,27 @@ const GridMotion: FC<GridMotionProps> = ({
             <div
               key={rowIndex}
               className="flex justify-between gap-4 w-max"
-              style={{ willChange: "transform, filter" }}
+              style={{ willChange: "transform" }}
               ref={(el) => {
                 rowRefs.current[rowIndex] = el;
               }}
             >
               {Array.from({ length: columnsCount }).map((_, itemIndex) => {
-                const content =
-                  combinedItems[rowIndex * columnsCount + itemIndex];
-
+                const content = combinedItems[
+                  rowIndex * columnsCount + itemIndex
+                ] as IProductEnhanced;
                 return (
                   <div
                     key={`${rowIndex}-${itemIndex}`}
                     className="relative w-full h-full aspect-square"
                   >
-                    <Product {...content} />
+                    {content ? <Product {...content} /> : null}
                   </div>
                 );
               })}
             </div>
           ))}
         </div>
-        <div className="relative w-full h-full top-0 left-0 pointer-events-none"></div>
       </section>
     </div>
   );

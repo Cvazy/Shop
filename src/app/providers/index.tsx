@@ -3,14 +3,12 @@
 import { PropsWithChildren, useEffect, useState, useRef } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { usePathname } from "next/navigation";
-import { ClickSparkProvider, getAccessToken, Loader } from "@/shared";
-import Particles from "@/components/Particles/Particles";
 import { Provider } from "react-redux";
 import { store } from "@/app/providers/StoreProviders/store";
-import { useAppDispatch } from "@/app/providers/StoreProviders/hooks";
-import { authActions } from "@/entities";
+import { ClickSparkProvider, getAccessToken, Loader } from "@/shared";
+import Particles from "@/components/Particles/Particles";
 import { AuthProvider } from "@/app/providers/AuthProvider";
+import { usePathname } from "next/navigation";
 
 export function Providers({ children }: PropsWithChildren) {
   const [client] = useState(
@@ -27,30 +25,15 @@ export function Providers({ children }: PropsWithChildren) {
 
   const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(true);
-  const timeoutRef = useRef<number | undefined>(undefined);
+  const initialPath = useRef(pathname);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setIsLoading(false), 2000);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    if (timeoutRef.current !== undefined) {
-      window.clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = window.setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
 
-    return () => {
-      if (timeoutRef.current !== undefined) {
-        window.clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [pathname]);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <Provider store={store}>
@@ -77,7 +60,7 @@ export function Providers({ children }: PropsWithChildren) {
               />
             </div>
 
-            {isLoading && <Loader />}
+            {isLoading && initialPath.current === pathname && <Loader />}
 
             {children}
           </ClickSparkProvider>

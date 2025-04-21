@@ -1,13 +1,7 @@
-// useProducts.ts
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import {
-  ICatalogResponse,
-  IFiltersResponse,
-  IProductEnhanced,
-  productService,
-} from "@/entities";
+import { IProductEnhanced, productService } from "@/entities";
 import { useEffect, useMemo, useState } from "react";
 
 export const useProducts = () => {

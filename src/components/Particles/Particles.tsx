@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 import { Renderer, Camera, Geometry, Program, Mesh } from "ogl";
 
 interface ParticlesProps {
@@ -60,9 +60,14 @@ const vertex = /* glsl */ `
     
     vec4 mPos = modelMatrix * vec4(pos, 1.0);
     float t = uTime;
-    mPos.x += sin(t * random.z + 6.28 * random.w) * mix(0.1, 1.5, random.x);
-    mPos.y += sin(t * random.y + 6.28 * random.x) * mix(0.1, 1.5, random.w);
-    mPos.z += sin(t * random.w + 6.28 * random.y) * mix(0.1, 1.5, random.z);
+    
+    float sinX = sin(t * random.z + 6.28 * random.w);
+    float sinY = sin(t * random.y + 6.28 * random.x);
+    float sinZ = sin(t * random.w + 6.28 * random.y);
+    
+    mPos.x += sinX * mix(0.1, 1.5, random.x);
+    mPos.y += sinY * mix(0.1, 1.5, random.w);
+    mPos.z += sinZ * mix(0.1, 1.5, random.z);
     
     vec4 mvPos = viewMatrix * mPos;
     gl_PointSize = (uBaseSize * (1.0 + uSizeRandomness * (random.x - 0.5))) / length(mvPos.xyz);
@@ -94,8 +99,18 @@ const fragment = /* glsl */ `
   }
 `;
 
+const getOptimalParticleCount = () => {
+  if (typeof window !== 'undefined' && window.innerWidth < 768) {
+    return 80;
+  }
+  else if (typeof window !== 'undefined' && window.innerWidth < 1200) {
+    return 150;
+  }
+  return 200;
+};
+
 const Particles: React.FC<ParticlesProps> = ({
-  particleCount = 200,
+  particleCount,
   particleSpread = 10,
   speed = 0.1,
   particleColors,
@@ -110,12 +125,39 @@ const Particles: React.FC<ParticlesProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const rendererRef = useRef<Renderer | null>(null);
+  const animationFrameIdRef = useRef<number | null>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  
+  const optimalParticleCount = useMemo(() => {
+    return particleCount || getOptimalParticleCount();
+  }, [particleCount]);
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        setIsVisible(entries[0].isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    const renderer = new Renderer({ depth: false, alpha: true });
+    const renderer = new Renderer({ depth: false, alpha: true, powerPreference: 'high-performance' });
+    rendererRef.current = renderer;
     const gl = renderer.gl;
     container.appendChild(gl.canvas);
     gl.clearColor(0, 0, 0, 0);
@@ -123,16 +165,24 @@ const Particles: React.FC<ParticlesProps> = ({
     const camera = new Camera(gl, { fov: 15 });
     camera.position.set(0, 0, cameraDistance);
 
-    const resize = () => {
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      renderer.setSize(width, height);
-      camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+    const resizeHandler = () => {
+      if (animationFrameIdRef.current) {
+        cancelAnimationFrame(animationFrameIdRef.current);
+      }
+      
+      animationFrameIdRef.current = requestAnimationFrame(() => {
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        renderer.setSize(width, height);
+        camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
+      });
     };
-    window.addEventListener("resize", resize, false);
-    resize();
+    
+    window.addEventListener("resize", resizeHandler, { passive: true });
+    resizeHandler();
 
-    const count = particleCount;
+    const count = optimalParticleCount;
+    
     const positions = new Float32Array(count * 3);
     const randoms = new Float32Array(count * 4);
     const colors = new Float32Array(count * 3);
@@ -181,12 +231,23 @@ const Particles: React.FC<ParticlesProps> = ({
 
     const particles = new Mesh(gl, { mode: gl.POINTS, geometry, program });
 
-    let animationFrameId: number;
     let lastTime = performance.now();
     let elapsed = 0;
+    let frameSkip = 0;
 
     const update = (t: number) => {
-      animationFrameId = requestAnimationFrame(update);
+      if (!isVisible) {
+        animationFrameIdRef.current = requestAnimationFrame(update);
+        return;
+      }
+      
+      animationFrameIdRef.current = requestAnimationFrame(update);
+      
+      if (window.innerWidth < 768) {
+        frameSkip = (frameSkip + 1) % 2;
+        if (frameSkip !== 0) return;
+      }
+      
       const delta = t - lastTime;
       lastTime = t;
       elapsed += delta * speed;
@@ -210,17 +271,21 @@ const Particles: React.FC<ParticlesProps> = ({
       renderer.render({ scene: particles, camera });
     };
 
-    animationFrameId = requestAnimationFrame(update);
+    animationFrameIdRef.current = requestAnimationFrame(update);
 
     return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", resizeHandler);
+      if (animationFrameIdRef.current) {
+        cancelAnimationFrame(animationFrameIdRef.current);
+      }
       if (container.contains(gl.canvas)) {
         container.removeChild(gl.canvas);
       }
+      geometry.remove();
+      program.remove();
     };
   }, [
-    particleCount,
+    optimalParticleCount,
     particleSpread,
     speed,
     moveParticlesOnHover,
@@ -230,9 +295,10 @@ const Particles: React.FC<ParticlesProps> = ({
     sizeRandomness,
     cameraDistance,
     disableRotation,
+    isVisible,
   ]);
 
   return <div ref={containerRef} className={`w-full h-full ${className}`} />;
 };
 
-export default Particles;
+export default React.memo(Particles);

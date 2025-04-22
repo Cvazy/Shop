@@ -26,15 +26,35 @@ export const Footer = () => {
   useEffect(() => {
     if (!isClient) return;
     
-    if (isScrollBlocked) {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    }
+    const bodyStyle = document.body.style;
+    const htmlStyle = document.documentElement.style;
     
-    return () => {
-      // Восстанавливаем прокрутку при размонтировании
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
+    if (isScrollBlocked) {
+      // Сохраняем предыдущие значения (на всякий случай)
+      const prevBodyOverflow = bodyStyle.overflow;
+      const prevHtmlOverflow = htmlStyle.overflow;
+      const prevBodyTouchAction = bodyStyle.touchAction;
+      const prevHtmlTouchAction = htmlStyle.touchAction;
+
+      bodyStyle.overflow = "hidden";
+      htmlStyle.overflow = "hidden"; // Часто нужно для обеих
+      bodyStyle.touchAction = "none";
+      htmlStyle.touchAction = "none"; // И для html тоже
+      
+      // Возвращаем стили при разблокировке или размонтировании
+      return () => {
+        bodyStyle.overflow = prevBodyOverflow; 
+        htmlStyle.overflow = prevHtmlOverflow;
+        bodyStyle.touchAction = prevBodyTouchAction;
+        htmlStyle.touchAction = prevHtmlTouchAction;
+      }
+    } else {
+        // Если не заблокировано, убедимся, что стили сброшены
+        // (Это необязательно, если функция очистки выше всегда вызывается)
+        bodyStyle.overflow = ""; 
+        htmlStyle.overflow = "";
+        bodyStyle.touchAction = "";
+        htmlStyle.touchAction = "";
     }
   }, [isScrollBlocked, isClient]);
 

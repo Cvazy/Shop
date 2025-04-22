@@ -180,8 +180,7 @@ function LanyardContent({
   
   // Определение DPR в зависимости от производительности
   const dprValue = useMemo(() => {
-    if (lowPerformance || isBatteryLow) return 0.5;
-    if (midPerformance) return 1;
+    if (lowPerformance || midPerformance || isBatteryLow) return 1;
     return [1, 2] as [number, number]; // Адаптивный DPR для высокопроизводительных устройств
   }, [lowPerformance, midPerformance, isBatteryLow]);
   
@@ -190,7 +189,7 @@ function LanyardContent({
     gl: { 
       alpha: transparent,
       powerPreference: 'high-performance' as WebGLPowerPreference,
-      antialias: !lowPerformance,
+      antialias: true,
       precision: lowPerformance ? 'mediump' : 'highp',
       stencil: false,
       depth: true,
@@ -337,18 +336,18 @@ const Band = React.memo(function Band({
     linearDamping: 4,
   }), []);
 
-  // Низкое или высокое качество модели в зависимости от производительности
+  // Низкое или высокое качество модели в зависимости от производительности -> Всегда высокое
   const modelPath = useMemo(() => 
-    lowPerformance ? "/assets/card_low.glb" : "/assets/card.glb", 
-  [lowPerformance]);
+    "/assets/card.glb", // Всегда используем модель высокого разрешения
+  [/*lowPerformance*/]); // Убираем зависимость
   
   // Загружаем оптимизированную модель
   const { nodes } = useGLTF(modelPath) as any;
 
-  // Оптимизируем текстуру
+  // Оптимизируем текстуру: Используем _low модель, но всегда hires текстуру
   const texturePath = useMemo(() => 
-    lowPerformance ? "/assets/lanyard_low.png" : "/assets/lanyard.png",
-  [lowPerformance]);
+    "/assets/lanyard.png", // Всегда используем текстуру высокого разрешения
+  [/*lowPerformance*/]); // Убираем зависимость
   const texture = useTexture(texturePath);
   
   // Оптимизируем кривую с адаптивным количеством точек

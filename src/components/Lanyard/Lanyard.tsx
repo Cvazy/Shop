@@ -335,11 +335,7 @@ const Band = React.memo(function Band({
     colliders: false,
     angularDamping: 4,
     linearDamping: 4,
-    // Добавляем дополнительную оптимизацию для физики
-    massProperties: lowPerformance ? { 
-      mass: 1, // Упрощенное значение массы для низкой производительности
-    } : undefined,
-  }), [lowPerformance]);
+  }), []);
 
   // Низкое или высокое качество модели в зависимости от производительности
   const modelPath = useMemo(() => 
@@ -516,7 +512,7 @@ const Band = React.memo(function Band({
           {...segmentProps}
           type={"dynamic" as RigidBodyProps["type"]}
         >
-          <BallCollider args={[0.1]} />
+          <BallCollider args={[0.1]} density={1} />
         </RigidBody>
         <RigidBody
           position={[1, 0, 0]}
@@ -524,7 +520,7 @@ const Band = React.memo(function Band({
           {...segmentProps}
           type={"dynamic" as RigidBodyProps["type"]}
         >
-          <BallCollider args={[0.1]} />
+          <BallCollider args={[0.1]} density={1} />
         </RigidBody>
         <RigidBody
           position={[1.5, 0, 0]}
@@ -532,7 +528,7 @@ const Band = React.memo(function Band({
           {...segmentProps}
           type={"dynamic" as RigidBodyProps["type"]}
         >
-          <BallCollider args={[0.1]} />
+          <BallCollider args={[0.1]} density={1} />
         </RigidBody>
         <RigidBody
           position={[2, 0, 0]}
@@ -544,7 +540,7 @@ const Band = React.memo(function Band({
               : ("dynamic" as RigidBodyProps["type"])
           }
         >
-          <CuboidCollider args={[0.8, 1.125, 0.01]} />
+          <CuboidCollider args={[0.8, 1.125, 0.01]} density={1} />
           <group
             scale={0.7}
             position={[0, -1.6, 0.05]}
@@ -564,26 +560,17 @@ const Band = React.memo(function Band({
               );
             }}
           >
-            {/* Рендерим упрощенную геометрию для низкой производительности */}
-            {lowPerformance ? (
-              <mesh>
-                <boxGeometry args={[1.6, 2.25, 0.02]} />
-                <meshStandardMaterial color="#f1f1f1" />
-              </mesh>
-            ) : (
-              <>
-                <mesh
-                  geometry={nodes.Object_2.geometry}
-                  material={nodes.Object_2.material}
-                  frustumCulled={true}
-                />
-                <mesh
-                  geometry={nodes.Object_3.geometry}
-                  material={nodes.Object_3.material}
-                  frustumCulled={true}
-                />
-              </>
-            )}
+            {/* Убираем условный рендеринг, всегда используем загруженную модель */}
+            <mesh
+              geometry={nodes.Object_2.geometry}
+              material={nodes.Object_2.material}
+              frustumCulled={true}
+            />
+            <mesh
+              geometry={nodes.Object_3.geometry}
+              material={nodes.Object_3.material}
+              frustumCulled={true}
+            />
           </group>
         </RigidBody>
       </group>

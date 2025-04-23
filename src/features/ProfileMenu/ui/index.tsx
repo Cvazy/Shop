@@ -1,8 +1,11 @@
+"use client";
+
 import { useMutation } from "@tanstack/react-query";
 import { authActions, authService } from "@/entities";
 import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
+import { useHasMounted } from "@/shared";
 
 import styles from "./ProfileMenu.module.css";
 import {
@@ -12,6 +15,7 @@ import {
 
 export const ProfileMenu = () => {
   const dispatch = useAppDispatch();
+  const hasMounted = useHasMounted();
 
   const { isAuth } = useAppSelector((state) => state.auth);
 
@@ -26,6 +30,24 @@ export const ProfileMenu = () => {
   const handleLogout = () => {
     mutate();
   };
+
+  if (!hasMounted) {
+    return (
+      <Link href={"/auth"}>
+        <button className={styles.Login}>
+          <Image
+            width={24}
+            height={24}
+            src={"/icons/login.svg"}
+            alt={"Login"}
+            loading={"lazy"}
+            draggable={false}
+          />
+          <span>Login</span>
+        </button>
+      </Link>
+    );
+  }
 
   return (
     <>

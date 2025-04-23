@@ -44,19 +44,19 @@ const ScrollVelocity: React.FC<ScrollVelocityProps> = ({
     parallaxStyle,
     scrollerStyle,
   }: VelocityTextProps) {
-    // const baseX = useMotionValue(0);
-    // const scrollOptions = scrollContainerRef
-    //   ? { container: scrollContainerRef }
-    //   : {};
-    // const { scrollY } = useScroll(scrollOptions);
-    // const scrollVelocity = useVelocity(scrollY);
+    const baseX = useMotionValue(0);
+    const scrollOptions = scrollContainerRef
+      ? { container: scrollContainerRef }
+      : {};
+    const { scrollY } = useScroll(scrollOptions);
+    const scrollVelocity = useVelocity(scrollY);
     const smoothVelocity = useSpring(scrollVelocity, {
       damping: damping ?? 50,
       stiffness: stiffness ?? 400,
     });
     const velocityFactor = useTransform(
-      // smoothVelocity,
-      // velocityMapping?.input || [0, 1000],
+      smoothVelocity,
+      velocityMapping?.input || [0, 1000],
       velocityMapping?.output || [0, 5],
       { clamp: false },
     );

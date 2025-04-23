@@ -6,19 +6,26 @@ export enum EnumTokens {
 }
 
 export const getAccessToken = () => {
+  if (typeof window === 'undefined') return null;
+  
   const accessToken = Cookies.get(EnumTokens.ACCESS_TOKEN);
-
   return accessToken || null;
 };
 
 export const saveTokenStorage = (accessToken: string) => {
+  if (typeof window === 'undefined') return;
+  
   Cookies.set(EnumTokens.ACCESS_TOKEN, accessToken, {
-    domain: "localhost",
-    sameSite: "strict",
+    sameSite: "lax",
     expires: 1,
+    path: "/",
   });
 };
 
 export const removeFromStorage = () => {
-  Cookies.remove(EnumTokens.ACCESS_TOKEN);
+  if (typeof window === 'undefined') return;
+  
+  Cookies.remove(EnumTokens.ACCESS_TOKEN, {
+    path: "/",
+  });
 };

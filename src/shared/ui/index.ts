@@ -2,6 +2,7 @@ export * from "./Button";
 export * from "./Checkbox";
 export * from "./CustomImage";
 export * from "./ClickSpark";
+export * from "./FilterToggleIcon";
 export * from "./Loader";
 export * from "./Logo";
 export * from "./Input";

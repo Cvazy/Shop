@@ -1,9 +1,11 @@
 "use client";
 
 import LiquidChrome from "@/components/LiquidChrome/LiquidChrome";
-import { Checkbox, InputWithLabel } from "@/shared";
+import { FilterToggleIcon, InputWithLabel } from "@/shared";
 import { IFiltersResponse } from "@/entities";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState, useEffect } from "react";
+import { FiltersMenu } from "@/features";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface IShopFilterProps {
   filtersData: IFiltersResponse | undefined;
@@ -22,6 +24,20 @@ export const ShopFilter = ({
 }: IShopFilterProps) => {
   const { types, segments } = filtersData || {};
   const [inputValue, setInputValue] = useState("");
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const checkIsDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+
+    checkIsDesktop();
+
+    window.addEventListener("resize", checkIsDesktop);
+
+    return () => window.removeEventListener("resize", checkIsDesktop);
+  }, []);
 
   const handleInputChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
     const value = target.value;
@@ -29,10 +45,14 @@ export const ShopFilter = ({
     onSearchChange(value);
   };
 
+  const toggleFilters = () => {
+    setIsFiltersOpen((prev) => !prev);
+  };
+
   return (
     <div
       className={
-        "w-full h-20 relative rounded-xl lg:h-fit lg:col-span-1 lg:rounded-2xl"
+        "w-full h-auto min-h-20 relative rounded-xl lg:h-fit lg:col-span-1 lg:rounded-2xl"
       }
     >
       <LiquidChrome
@@ -45,48 +65,41 @@ export const ShopFilter = ({
       />
 
       <div className={"relative z-10 w-full h-full"}>
-        <div className={"flex flex-col gap-6 p-4 w-full"}>
-          <InputWithLabel value={inputValue} onChange={handleInputChange} />
+        <div className={"flex flex-col gap-6 p-4 w-full lg:flex-col"}>
+          <div className="flex items-center justify-between gap-5 w-full">
+            <InputWithLabel value={inputValue} onChange={handleInputChange} />
 
-          {segments && segments.length > 0 && (
-            <div className={"flex flex-col items-start gap-3 w-full"}>
-              <p className={"text-white text-sm lg:text-base text-left"}>
-                Segment
-              </p>
+            <button
+              onClick={toggleFilters}
+              className="lg:hidden flex items-center justify-center"
+              aria-label={isFiltersOpen ? "Close filters" : "Open filters"}
+            >
+              <FilterToggleIcon isOpen={isFiltersOpen} />
+            </button>
+          </div>
 
-              <ul className={"flex flex-col items-start gap-1.5 w-full"}>
-                {segments.map((segment) => (
-                  <li key={segment.id}>
-                    <Checkbox
-                      label={segment.name}
-                      checked={selectedSegments.has(segment.id)}
-                      onChange={() => toggleFilter("segment", segment.id)}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {types && types.length > 0 && (
-            <div className={"flex flex-col items-start gap-3 w-full"}>
-              <p className={"text-white text-sm lg:text-base text-left"}>
-                Type
-              </p>
-
-              <ul className={"flex flex-col items-start gap-1.5 w-full"}>
-                {types.map((type) => (
-                  <li key={type.id}>
-                    <Checkbox
-                      label={type.name}
-                      checked={selectedTypes.has(type.id)}
-                      onChange={() => toggleFilter("type", type.id)}
-                    />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <AnimatePresence>
+            {(isFiltersOpen || isDesktop) && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{
+                  duration: 0.3,
+                  ease: "easeInOut",
+                }}
+                className="overflow-hidden absolute top-20 left-0 right-0 z-20 lg:h-auto lg:opacity-100 lg:static"
+              >
+                <FiltersMenu
+                  types={types}
+                  segments={segments}
+                  selectedSegments={selectedSegments}
+                  toggleFilter={toggleFilter}
+                  selectedTypes={selectedTypes}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

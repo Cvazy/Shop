@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-import { ProductsContainer } from "@/widgets";
-import { ShopFilter } from "@/features";
 import { ShopContent } from "@/app/shop/ShopContent";
 
 export const metadata: Metadata = {

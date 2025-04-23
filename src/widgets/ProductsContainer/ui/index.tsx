@@ -13,7 +13,7 @@ export const ProductsContainer = ({
   return (
     <div
       className={
-        "flex flex-col items-center gap-5 w-full lg:gap-8 lg:col-span-3"
+        "flex flex-col items-center gap-5 w-full z-[1] lg:gap-8 lg:col-span-3"
       }
     >
       {filteredProducts && filteredProducts.length > 0 ? (

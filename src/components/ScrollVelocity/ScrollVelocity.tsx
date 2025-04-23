@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useLayoutEffect, useState } from "react";
+import React, { useRef } from "react";
 import {
   motion,
   useScroll,
@@ -10,58 +10,11 @@ import {
   useVelocity,
   useAnimationFrame,
 } from "framer-motion";
-
-interface VelocityMapping {
-  input: [number, number];
-  output: [number, number];
-}
-
-interface VelocityTextProps {
-  children: React.ReactNode;
-  baseVelocity: number;
-  scrollContainerRef?: React.RefObject<HTMLElement>;
-  className?: string;
-  damping?: number;
-  stiffness?: number;
-  numCopies?: number;
-  velocityMapping?: VelocityMapping;
-  parallaxClassName?: string;
-  scrollerClassName?: string;
-  parallaxStyle?: React.CSSProperties;
-  scrollerStyle?: React.CSSProperties;
-}
-
-interface ScrollVelocityProps {
-  scrollContainerRef?: React.RefObject<HTMLElement>;
-  texts: string[];
-  velocity?: number;
-  className?: string;
-  damping?: number;
-  stiffness?: number;
-  numCopies?: number;
-  velocityMapping?: VelocityMapping;
-  parallaxClassName?: string;
-  scrollerClassName?: string;
-  parallaxStyle?: React.CSSProperties;
-  scrollerStyle?: React.CSSProperties;
-}
-
-function useElementWidth(ref: React.RefObject<HTMLElement>): number {
-  const [width, setWidth] = useState(0);
-
-  useLayoutEffect(() => {
-    function updateWidth() {
-      if (ref.current) {
-        setWidth(ref.current.offsetWidth);
-      }
-    }
-    updateWidth();
-    window.addEventListener("resize", updateWidth);
-    return () => window.removeEventListener("resize", updateWidth);
-  }, [ref]);
-
-  return width;
-}
+import {
+  ScrollVelocityProps,
+  useElementWidth,
+  VelocityTextProps,
+} from "./model";
 
 const ScrollVelocity: React.FC<ScrollVelocityProps> = ({
   scrollContainerRef,
@@ -91,24 +44,24 @@ const ScrollVelocity: React.FC<ScrollVelocityProps> = ({
     parallaxStyle,
     scrollerStyle,
   }: VelocityTextProps) {
-    const baseX = useMotionValue(0);
-    const scrollOptions = scrollContainerRef
-      ? { container: scrollContainerRef }
-      : {};
-    const { scrollY } = useScroll(scrollOptions);
-    const scrollVelocity = useVelocity(scrollY);
+    // const baseX = useMotionValue(0);
+    // const scrollOptions = scrollContainerRef
+    //   ? { container: scrollContainerRef }
+    //   : {};
+    // const { scrollY } = useScroll(scrollOptions);
+    // const scrollVelocity = useVelocity(scrollY);
     const smoothVelocity = useSpring(scrollVelocity, {
       damping: damping ?? 50,
       stiffness: stiffness ?? 400,
     });
     const velocityFactor = useTransform(
-      smoothVelocity,
-      velocityMapping?.input || [0, 1000],
+      // smoothVelocity,
+      // velocityMapping?.input || [0, 1000],
       velocityMapping?.output || [0, 5],
       { clamp: false },
     );
 
-    const copyRef = useRef<HTMLSpanElement>(null);
+    const copyRef = useRef<HTMLSpanElement | null>(null);
     const copyWidth = useElementWidth(copyRef);
 
     function wrap(min: number, max: number, v: number): number {

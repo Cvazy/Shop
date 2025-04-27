@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { CallToAction, HowItsWorkElement } from "./components";
 import { useQuery } from "@tanstack/react-query";
 import { howItWorkService } from "@/entities";
 import { Loader, Subtitle } from "@/shared";
+
+// Define lerp function
+const lerp = (start: number, end: number, factor: number): number => {
+  return start * (1 - factor) + end * factor;
+};
 
 export const HowItsWork = () => {
   const { data, isLoading } = useQuery({
@@ -14,8 +19,13 @@ export const HowItsWork = () => {
 
   const lineRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const blockRefs = useRef<HTMLDivElement[]>([]);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const blockRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [activeIndices, setActiveIndices] = useState<number[]>([]);
+
+  const [lineProgress, setLineProgress] = useState(0);
+  const targetLineProgress = useRef(0);
+  const lerpAnimationIdRef = useRef<number | null>(null);
+  const scrollAnimationIdRef = useRef<number | null>(null);
 
   const setBlockRef = (el: HTMLDivElement | null, index: number) => {
     if (el) {
@@ -23,57 +33,121 @@ export const HowItsWork = () => {
     }
   };
 
-  const lerp = (start: number, end: number, factor: number) => {
-    return start + (end - start) * factor;
-  };
+  const animateLine = useCallback(() => {
+    setLineProgress((prevProgress) => {
+      if (Math.abs(prevProgress - targetLineProgress.current) < 0.001) {
+        lerpAnimationIdRef.current = null;
+        return targetLineProgress.current;
+      }
+      const nextProgress = lerp(prevProgress, targetLineProgress.current, 0.5);
+      lerpAnimationIdRef.current = requestAnimationFrame(animateLine);
+      return nextProgress;
+    });
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    if (!containerRef.current) {
+      scrollAnimationIdRef.current = requestAnimationFrame(handleScroll);
+      return;
+    }
+
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+
+    const scrollRange = viewportHeight + containerRect.height;
+    let currentScroll = viewportHeight - containerRect.top;
+
+    if (scrollRange <= 0) {
+      targetLineProgress.current = 0;
+    } else {
+      let rawProgress = currentScroll / scrollRange;
+      targetLineProgress.current = Math.min(1, Math.max(0, rawProgress));
+    }
+
+    if (lerpAnimationIdRef.current === null) {
+      lerpAnimationIdRef.current = requestAnimationFrame(animateLine);
+    }
+
+    scrollAnimationIdRef.current = requestAnimationFrame(handleScroll);
+  }, [animateLine]);
 
   useEffect(() => {
-    let animationFrameId: number;
-    let lastProgress = 0;
-
-    const handleScroll = () => {
-      if (!containerRef.current || !lineRef.current) return;
-
-      const container = containerRef.current;
-      const rect = container.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-
-      const startFill = windowHeight * 2.75;
-      const endFill = windowHeight / 2;
-
-      const offsetStart = 0.025;
-
-      let rawProgress = (startFill - rect.bottom) / (startFill - endFill);
-      rawProgress = Math.min(1, Math.max(0, rawProgress));
-      rawProgress = rawProgress * (1 - offsetStart) + offsetStart;
-
-      lastProgress = lerp(lastProgress, rawProgress, 0.1);
-      setScrollProgress(lastProgress);
-
-      const lineHeight = lineRef.current.offsetHeight;
-      const lineFilledHeight = lineHeight * lastProgress;
-      const containerTop = rect.top + window.scrollY;
-      const lineBottomPosition = containerTop + lineFilledHeight;
-
-      blockRefs.current.forEach((block) => {
-        const blockRect = block.getBoundingClientRect();
-        const blockTop = blockRect.top + window.scrollY;
-
-        const shouldBeActive = lineBottomPosition >= blockTop;
-        block.style.opacity = shouldBeActive ? "100%" : "20%";
-      });
-
-      animationFrameId = requestAnimationFrame(handleScroll);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
+    scrollAnimationIdRef.current = requestAnimationFrame(handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      cancelAnimationFrame(animationFrameId);
+      if (
+        scrollAnimationIdRef.current !== null &&
+        typeof scrollAnimationIdRef.current === "number"
+      ) {
+        cancelAnimationFrame(scrollAnimationIdRef.current);
+      }
+
+      if (
+        lerpAnimationIdRef.current !== null &&
+        typeof lerpAnimationIdRef.current === "number"
+      ) {
+        cancelAnimationFrame(lerpAnimationIdRef.current);
+      }
     };
-  }, []);
+  }, [handleScroll]);
+
+  useEffect(() => {
+    if (!data || data.length === 0) return;
+
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px 0px -50% 0px",
+      threshold: 0,
+    };
+
+    const handleIntersection: IntersectionObserverCallback = (entries) => {
+      setActiveIndices((currentIndices) => {
+        const currentActiveIndicesSet = new Set(currentIndices);
+        let indicesChanged = false;
+        entries.forEach((entry) => {
+          const targetElement = entry.target as HTMLElement;
+          const indexStr = targetElement.dataset.index;
+          if (indexStr === undefined) return;
+          const index = parseInt(indexStr, 10);
+
+          if (entry.isIntersecting) {
+            if (!currentActiveIndicesSet.has(index)) {
+              currentActiveIndicesSet.add(index);
+              indicesChanged = true;
+            }
+          } else {
+            if (currentActiveIndicesSet.has(index)) {
+              currentActiveIndicesSet.delete(index);
+              indicesChanged = true;
+            }
+          }
+        });
+
+        return indicesChanged
+          ? Array.from(currentActiveIndicesSet).sort((a, b) => a - b)
+          : currentIndices;
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      handleIntersection,
+      observerOptions as IntersectionObserverInit,
+    );
+
+    const currentBlocks = blockRefs.current.filter(
+      (el) => el !== null,
+    ) as HTMLDivElement[];
+    currentBlocks.forEach((el, index) => {
+      el.dataset.index = index.toString();
+      observer.observe(el);
+    });
+
+    return () => {
+      currentBlocks.forEach((el) => {
+        observer.unobserve(el);
+      });
+    };
+  }, [data]);
 
   if (isLoading) return <Loader />;
 
@@ -92,14 +166,13 @@ export const HowItsWork = () => {
               "no-transition w-[2px] h-auto lg:absolute lg:left-1/2 lg:right-1/2 lg:top-0 lg:bottom-0"
             }
           >
-            <div className={"no-transition relative bg-gray w-[2px] h-full"}>
+            <div className={"relative w-[2px] h-full bg-gray"}>
               <div
-                className={
-                  "no-transition absolute top-0 left-0 w-[2px] h-full bg-white"
-                }
+                className={"absolute top-0 left-0 w-[2px] h-full bg-white"}
                 style={{
-                  transform: `scaleY(${scrollProgress})`,
+                  transform: `scaleY(${lineProgress})`,
                   transformOrigin: "top",
+                  willChange: "transform",
                 }}
               ></div>
             </div>
@@ -115,19 +188,17 @@ export const HowItsWork = () => {
               data?.map(({ id, title, description }, index) => (
                 <div
                   key={id}
-                  className={`flex justify-start ${index % 2 === 0 ? "lg:justify-end" : "self-end"} w-full lg:w-[46%]`}
+                  ref={(el) => setBlockRef(el, index)}
+                  className={`flex justify-start ${index % 2 === 0 ? "lg:justify-end" : "self-end"} w-full lg:w-[46%] transition-opacity duration-500 ease-in-out`}
+                  style={{
+                    opacity: activeIndices.includes(index) ? "100%" : "20%",
+                  }}
                 >
-                  <div
-                    ref={(el) => setBlockRef(el, index)}
-                    className={"w-full lg:max-w-[420px]"}
-                    style={{ opacity: "100%" }}
-                  >
-                    <HowItsWorkElement
-                      index={index}
-                      title={title}
-                      description={description}
-                    />
-                  </div>
+                  <HowItsWorkElement
+                    index={index}
+                    title={title}
+                    description={description}
+                  />
                 </div>
               ))}
           </div>

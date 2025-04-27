@@ -1,4 +1,4 @@
-import { IHowItsWork } from "@/app/contact";
+import { IHowItsWork } from "@/entities";
 
 interface IHowItsWorkElementProps extends Omit<IHowItsWork, "id"> {
   index: number;

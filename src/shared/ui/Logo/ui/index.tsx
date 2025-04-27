@@ -6,7 +6,7 @@ export const Logo = () => {
       speed={4}
       className={"text-5xl font-semibold md:text-6xl xl:text-7xl"}
     >
-      alco
+      kaif
     </GlitchText>
   );
 };

@@ -91,7 +91,7 @@ export const Footer = () => {
       <div className="flex flex-col items-center gap-10 w-full h-full">
         <div className="py-8 w-full md:py-10 xl:py-12">
           <ScrollVelocity
-            texts={["AlcoShop"]}
+            texts={["KaifShop"]}
             className="custom-scroll-text text-foreground mr-10"
           />
         </div>

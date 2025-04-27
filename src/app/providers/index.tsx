@@ -1,29 +1,39 @@
 "use client";
 
-import React, { PropsWithChildren, useEffect, useState, useRef, lazy, Suspense } from "react";
+import React, {
+  PropsWithChildren,
+  useEffect,
+  useState,
+  useRef,
+  lazy,
+  Suspense,
+} from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider } from "react-redux";
 import { store } from "@/app/providers/StoreProviders/store";
-import { getAccessToken, Loader } from "@/shared";
+import { Loader } from "@/shared";
 import { AuthProvider } from "@/app/providers/AuthProvider";
 import { usePathname } from "next/navigation";
 
-// Используем ленивую загрузку для тяжелых компонентов
 const LazyParticles = lazy(() => import("@/components/Particles/Particles"));
-const LazyClickSparkProvider = lazy(() => import("@/shared").then(module => ({ default: module.ClickSparkProvider })));
+const LazyClickSparkProvider = lazy(() =>
+  import("@/shared").then((module) => ({ default: module.ClickSparkProvider })),
+);
 
-// Используем динамический импорт для ReactQueryDevtools, чтобы загружать его только в dev режиме
-const ReactQueryDevtools = process.env.NODE_ENV === 'development' 
-  ? lazy(() => import("@tanstack/react-query-devtools").then(module => ({ 
-      default: module.ReactQueryDevtools 
-    }))) 
-  : () => null;
+const ReactQueryDevtools =
+  process.env.NODE_ENV === "development"
+    ? lazy(() =>
+        import("@tanstack/react-query-devtools").then((module) => ({
+          default: module.ReactQueryDevtools,
+        })),
+      )
+    : () => null;
 
-// Простой фолбэк для ленивой загрузки компонентов
-const SimpleFallback = () => <div className="absolute inset-0 z-[1] bg-black" />;
+const SimpleFallback = () => (
+  <div className="absolute inset-0 z-[1] bg-black" />
+);
 
 export function Providers({ children }: PropsWithChildren) {
-  // Создаем и мемоизируем QueryClient для предотвращения ненужных рендеров
   const queryClientRef = useRef<QueryClient | null>(null);
   if (!queryClientRef.current) {
     queryClientRef.current = new QueryClient({
@@ -33,8 +43,6 @@ export function Providers({ children }: PropsWithChildren) {
           staleTime: 5 * 60 * 1000,
           gcTime: 60 * 60 * 1000,
           retry: 1,
-          // Используем оптимизацию для кэширования
-          // cacheTime устарел, используем только gcTime
         },
       },
     });
@@ -45,11 +53,9 @@ export function Providers({ children }: PropsWithChildren) {
   const initialPath = useRef(pathname);
   const [isAppReady, setIsAppReady] = useState(false);
 
-  // Оптимизируем начальную загрузку
   useEffect(() => {
-    // Используем requestIdleCallback для загрузки в фоновом режиме, когда браузер не занят
     const useIdleCallback = (callback: () => void) => {
-      if ('requestIdleCallback' in window) {
+      if ("requestIdleCallback" in window) {
         return window.requestIdleCallback(callback);
       } else {
         return setTimeout(callback, 1);
@@ -57,19 +63,17 @@ export function Providers({ children }: PropsWithChildren) {
     };
 
     const cancelIdleCallback = (id: any) => {
-      if ('cancelIdleCallback' in window) {
+      if ("cancelIdleCallback" in window) {
         window.cancelIdleCallback(id as number);
       } else {
         clearTimeout(id);
       }
     };
 
-    // Основной таймер для загрузки
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
 
-    // Используем отложенную загрузку для медленных компонентов
     const idleCallbackId = useIdleCallback(() => {
       setIsAppReady(true);
     });
@@ -80,11 +84,14 @@ export function Providers({ children }: PropsWithChildren) {
     };
   }, []);
 
-  // Оптимизируем для различных устройств
-  const isLowPerformanceDevice = typeof window !== 'undefined' && 
-    (window.innerWidth < 768 || 
-     ('hardwareConcurrency' in navigator && navigator.hardwareConcurrency <= 4) || 
-     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+  const isLowPerformanceDevice =
+    typeof window !== "undefined" &&
+    (window.innerWidth < 768 ||
+      ("hardwareConcurrency" in navigator &&
+        navigator.hardwareConcurrency <= 4) ||
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent,
+      ));
 
   const particleSettings = {
     particleCount: isLowPerformanceDevice ? 80 : 200,
@@ -128,7 +135,7 @@ export function Providers({ children }: PropsWithChildren) {
                 {children}
               </LazyClickSparkProvider>
             )}
-            
+
             {!isAppReady && (
               <>
                 <SimpleFallback />
@@ -137,7 +144,7 @@ export function Providers({ children }: PropsWithChildren) {
             )}
           </Suspense>
 
-          {process.env.NODE_ENV === 'development' && (
+          {process.env.NODE_ENV === "development" && (
             <Suspense fallback={null}>
               <ReactQueryDevtools initialIsOpen={false} />
             </Suspense>

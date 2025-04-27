@@ -56,3 +56,7 @@ path {
 .main-p {
   @apply pt-[132px] md:pt-36 xl:pt-[152px]
 }
+
+.block_wrapper {
+  @apply py-10 w-full sm:py-12 md:py-14 xl:py-16
+}

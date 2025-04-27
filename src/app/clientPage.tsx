@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Suspense, useEffect, useState } from "react";
+import { ContactUs } from "@/widgets";
 
 const MainBanner = React.lazy(() =>
   import("@/widgets").then((module) => ({
@@ -28,6 +29,14 @@ export default function ClientHome() {
       <Suspense fallback={<BannerPlaceholder />}>
         <MainBanner />
       </Suspense>
+
+      <div
+        className={"flex justify-center px-7 w-full sm:px-8 lg:px-10 xl:px-12"}
+      >
+        <div className={"max-w-limit w-full"}>
+          <ContactUs />
+        </div>
+      </div>
     </div>
   );
 }

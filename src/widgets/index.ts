@@ -1,5 +1,7 @@
+export * from "./ContactUs";
 export * from "./Header";
 export * from "./HeaderNav";
+export * from "./HowItsWork";
 export * from "./Footer";
 export * from "./GooeyNav";
 export * from "./MainBanner";

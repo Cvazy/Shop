@@ -1,3 +1,4 @@
+export * from "./BlockWrapper";
 export * from "./Button";
 export * from "./Checkbox";
 export * from "./CustomImage";
@@ -7,4 +8,5 @@ export * from "./Loader";
 export * from "./Logo";
 export * from "./Input";
 export * from "./InputWithLabel";
+export * from "./Subtitle";
 export * from "./Switcher";

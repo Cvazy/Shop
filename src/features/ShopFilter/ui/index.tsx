@@ -25,7 +25,7 @@ export const ShopFilter = ({
   const { types, segments } = filtersData || {};
   const [inputValue, setInputValue] = useState("");
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
 
   useEffect(() => {
     const checkIsDesktop = () => {
@@ -81,14 +81,14 @@ export const ShopFilter = ({
           <AnimatePresence>
             {(isFiltersOpen || isDesktop) && (
               <motion.div
-                initial={{ height: 0, opacity: 0 }}
+                initial={{ height: isDesktop ? "auto" : 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{
                   duration: 0.3,
                   ease: "easeInOut",
                 }}
-                className="overflow-hidden absolute top-20 left-0 right-0 z-20 lg:h-auto lg:opacity-100 lg:static"
+                className="overflow-hidden absolute top-20 left-0 right-0 z-20 max-lg:rounded-2xl max-lg:shadow-[0_4px_40px_0_#ffffff7a] lg:h-auto lg:opacity-100 lg:static"
               >
                 <FiltersMenu
                   types={types}

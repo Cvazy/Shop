@@ -1,0 +1,7 @@
+.DescriptionBlock {
+    @apply text-base
+}
+
+.DescriptionBlock p {
+    @apply text-background
+}

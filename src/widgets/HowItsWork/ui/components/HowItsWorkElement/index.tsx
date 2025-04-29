@@ -24,11 +24,7 @@ export const HowItsWorkElement = ({
           {title}
         </p>
 
-        <p
-          className={
-            "font-fancy text-[15px] leading-6 text-light_gray text-left"
-          }
-        >
+        <p className={"text-[15px] leading-6 text-light_gray text-left"}>
           {description}
         </p>
       </div>

@@ -6,7 +6,6 @@ import { useQuery } from "@tanstack/react-query";
 import { howItWorkService } from "@/entities";
 import { Loader, Subtitle } from "@/shared";
 
-// Define lerp function
 const lerp = (start: number, end: number, factor: number): number => {
   return start * (1 - factor) + end * factor;
 };

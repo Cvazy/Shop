@@ -1,15 +1,22 @@
 "use client";
 
 import { ShopItem } from "./ShopItem";
-import { useQuery } from "@tanstack/react-query";
-import { ICatalogResponse, IProductEnhanced, productService } from "@/entities";
-import { useProducts } from "@/shared";
+import { IProductEnhanced } from "@/entities";
+import { Pagination } from "@/features";
+
+interface IProductsContainerProps {
+  totalPages: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
+  filteredProducts: IProductEnhanced[] | undefined;
+}
 
 export const ProductsContainer = ({
+  totalPages,
+  currentPage,
+  onPageChange,
   filteredProducts,
-}: {
-  filteredProducts: IProductEnhanced[] | undefined;
-}) => {
+}: IProductsContainerProps) => {
   return (
     <div
       className={
@@ -32,7 +39,13 @@ export const ProductsContainer = ({
         </p>
       )}
 
-      <div></div>
+      {totalPages > 0 && totalPages > 1 && (
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={onPageChange}
+        />
+      )}
     </div>
   );
 };

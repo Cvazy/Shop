@@ -1,0 +1,24 @@
+.ChangeDriver::before,
+.ChangeDriver::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 2px;
+    background: var(--background);
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform 1s ease-in-out;
+}
+
+.ChangeDriver::before {
+    top: 50%;
+    height: 50%;
+    transform-origin: center top;
+}
+
+.ChangeDriver::after {
+    bottom: 50%;
+    height: 50%;
+    transform-origin: center bottom;
+    transition: box-shadow 0.5s ease-in-out;
+}

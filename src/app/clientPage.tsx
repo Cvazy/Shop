@@ -2,6 +2,7 @@
 
 import React, { Suspense, useEffect, useState } from "react";
 import { ContactUs } from "@/widgets";
+import { Difference } from "@/widgets/Difference";
 
 const MainBanner = React.lazy(() =>
   import("@/widgets").then((module) => ({
@@ -34,6 +35,8 @@ export default function ClientHome() {
         className={"flex justify-center px-7 w-full sm:px-8 lg:px-10 xl:px-12"}
       >
         <div className={"max-w-limit w-full"}>
+          <Difference />
+
           <ContactUs />
         </div>
       </div>

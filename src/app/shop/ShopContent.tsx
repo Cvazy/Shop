@@ -12,6 +12,9 @@ export const ShopContent = () => {
     selectedTypes,
     toggleFilter,
     setSearchTerm,
+    currentPage,
+    setCurrentPage,
+    totalPages,
   } = useProducts();
 
   return (
@@ -24,7 +27,12 @@ export const ShopContent = () => {
         onSearchChange={setSearchTerm}
       />
 
-      <ProductsContainer filteredProducts={filteredProducts} />
+      <ProductsContainer
+        filteredProducts={filteredProducts}
+        totalPages={totalPages}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </>
   );
 };

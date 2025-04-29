@@ -23,6 +23,7 @@ module.exports = {
         foreground: "var(--foreground)",
         gray: "var(--gray)",
         light_gray: "var(--light-gray)",
+        red: "var(--red)",
       },
       translate: {
         101: "101%",

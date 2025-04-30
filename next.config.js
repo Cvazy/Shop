@@ -4,7 +4,21 @@ module.exports = {
   
   // Оптимизация изображений
   images: {
-    domains: [],
+    domains: [
+      'localhost',
+      '127.0.0.1',
+      process.env.NEXT_PUBLIC_SERVER_URL?.replace(/^https?:\/\//, '') || ''
+    ],
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
@@ -29,9 +43,6 @@ module.exports = {
   serverRuntimeConfig: {
     // API маршруты не будут использовать Edge Runtime
   },
-  
-  // Отключаем Edge Runtime глобально
-  runtime: 'nodejs',
   
   // Исключение предупреждений о несовместимых API
   eslint: {

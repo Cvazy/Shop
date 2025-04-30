@@ -1,16 +1,17 @@
 "use client";
 
 import GridMotion from "@/components/GridMotion/GridMotion";
-import { Loader, useProducts } from "@/shared";
+import { Loader } from "@/shared";
+import { useProducts } from "@/shared/hooks";
 
 export const MainBanner = () => {
-  const { enhancedProducts, isLoading } = useProducts();
+  const { filteredProducts, isLoading } = useProducts();
 
   if (isLoading) return <Loader />;
 
   return (
     <section className={"flex justify-center items-center w-full h-dvh"}>
-      {enhancedProducts && <GridMotion items={enhancedProducts} />}
+      {filteredProducts && <GridMotion items={filteredProducts} />}
     </section>
   );
 };

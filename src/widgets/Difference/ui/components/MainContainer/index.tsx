@@ -30,7 +30,7 @@ export const MainContainer = () => {
 
   const [mainOpacity, setMainOpacity] = useState<number>(0);
 
-  const [currentLogo, setCurrentLogo] = useState<string>("/logos/log.svg");
+  const [currentLogo, setCurrentLogo] = useState<string>("/logos/logo.svg");
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   const [isMobile, setIsMobile] = useState(false);
@@ -134,8 +134,8 @@ export const MainContainer = () => {
               transition={{ duration: 0.5, ease: "easeInOut" }}
             >
               <Image
-                width={31}
-                height={31}
+                width={32}
+                height={32}
                 src={currentLogo}
                 alt={shiftPercentage > 50 ? "Regular store" : "Kaif"}
                 loading={"lazy"}

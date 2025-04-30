@@ -21,14 +21,17 @@ export const productService = {
     if (searchTerm && searchTerm?.trim()) {
       url.searchParams.set("search", searchTerm.trim());
     }
+
     if (page) {
-        url.searchParams.set("page", page.toString());
+      url.searchParams.set("page", page.toString());
     }
+
     if (types && types.size > 0) {
-        url.searchParams.set("type", Array.from(types).join(","));
+      url.searchParams.set("type", Array.from(types).join(","));
     }
+
     if (segments && segments.size > 0) {
-        url.searchParams.set("segment", Array.from(segments).join(","));
+      url.searchParams.set("segment", Array.from(segments).join(","));
     }
 
     const response = await fetch(url.toString(), {

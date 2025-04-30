@@ -2,7 +2,7 @@
 
 import { ShopFilter } from "@/features";
 import { ProductsContainer } from "@/widgets";
-import { useProducts } from "@/shared";
+import { useProducts } from "@/shared/hooks";
 
 export const ShopContent = () => {
   const {

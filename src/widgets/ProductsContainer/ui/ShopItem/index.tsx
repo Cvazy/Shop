@@ -4,16 +4,29 @@ import styles from "./ShopItem.module.css";
 import ShinyText from "@/components/ShinyText/ShinyText";
 import StarBorder from "@/components/StarBorder/StarBorder";
 import { formatNumberWithDots, IProductEnhanced } from "@/entities";
-import { useEffect, useState } from "react";
-import { CustomImage, extractMediaPath, imageLoader } from "@/shared";
+import { useEffect, useRef, useState } from "react";
+import {
+  CustomImage,
+  extractMediaPath,
+  imageLoader,
+  useCartContext,
+} from "@/shared";
+import Counter from "@/components/Counter/Counter";
 
 export const ShopItem = ({
   product_name,
   images,
   price,
   typeName,
+  id,
 }: IProductEnhanced) => {
+  const [value, setValue] = useState<number>(1);
+  const [isAddedToCart, setIsAddedToCart] = useState<boolean>(false);
   const [isMounted, setIsMounted] = useState<boolean>(false);
+  const productRef = useRef<HTMLDivElement>(null);
+
+  const { addToCart, updateQuantity, removeFromCart, triggerCartAnimation } =
+    useCartContext();
 
   useEffect(() => {
     setIsMounted(true);
@@ -28,8 +41,54 @@ export const ShopItem = ({
     };
   };
 
+  const getFullImageUrl = (image: string) => {
+    if (image.startsWith("http")) return image;
+
+    return `${process.env.NEXT_PUBLIC_SERVER_URL}${extractMediaPath(image)}`;
+  };
+
+  const handleAddToCart = () => {
+    if (!isAddedToCart) {
+      addToCart(id as string, 1);
+      setIsAddedToCart(true);
+
+      triggerAnimation();
+    }
+  };
+
+  const triggerAnimation = () => {
+    if (productRef.current && images.length > 0) {
+      const imageUrl = getFullImageUrl(images[0].image);
+
+      triggerCartAnimation(productRef.current, imageUrl);
+    }
+  };
+
+  const handleIncrease = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    const newValue = value + 1;
+    setValue(newValue);
+
+    updateQuantity(id as string, newValue);
+    triggerAnimation();
+  };
+
+  const handleDecrease = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    const newValue = value - 1;
+
+    if (newValue <= 0) {
+      removeFromCart(id as string);
+      setIsAddedToCart(false);
+      setValue(1);
+    } else {
+      setValue(newValue);
+      updateQuantity(id as string, newValue);
+    }
+  };
+
   return (
-    <div className={styles.card}>
+    <div className={styles.card} ref={productRef}>
       {[...Array(10)].map((_, index) => {
         const values = getValues(index);
         return (
@@ -82,7 +141,7 @@ export const ShopItem = ({
 
             <div
               className={
-                "flex items-center justify-between gap-4 flex-nowrap w-full"
+                "flex flex-col items-start justify-between gap-4 flex-nowrap w-full sm:items-center sm:flex-row"
               }
             >
               <p
@@ -93,8 +152,50 @@ export const ShopItem = ({
                 {formatNumberWithDots(price)} ₽
               </p>
 
-              <StarBorder className={"w-fit"} textClassName={"!py-2.5"}>
-                <ShinyText text={"Shop"} disabled={false} speed={3} />
+              <StarBorder
+                as={"div"}
+                onClick={handleAddToCart}
+                className={"w-full sm:w-fit"}
+                textClassName={`!py-2.5 ${isAddedToCart ? "!px-2" : ""} sm:w-fit`}
+              >
+                {isAddedToCart ? (
+                  <div
+                    className={
+                      "flex justify-center items-center gap-2 flex-nowrap"
+                    }
+                  >
+                    <button
+                      type={"button"}
+                      className={
+                        "flex items-center justify-center w-5 min-w-5 aspect-square text-xl"
+                      }
+                      onClick={handleDecrease}
+                    >
+                      -
+                    </button>
+
+                    <Counter
+                      value={value}
+                      places={[10, 1]}
+                      fontSize={20}
+                      padding={5}
+                      textColor={"#fafafa"}
+                      fontWeight={900}
+                    />
+
+                    <button
+                      type={"button"}
+                      className={
+                        "flex items-center justify-center w-5 min-w-5 aspect-square text-xl"
+                      }
+                      onClick={handleIncrease}
+                    >
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  <ShinyText text={"Shop"} disabled={false} speed={3} />
+                )}
               </StarBorder>
             </div>
           </div>

@@ -14,6 +14,14 @@ import { store } from "@/app/providers/StoreProviders/store";
 import { Loader } from "@/shared";
 import { AuthProvider } from "@/app/providers/AuthProvider";
 import { usePathname } from "next/navigation";
+import { CartProvider } from "@/shared/contexts/CartContext";
+import dynamic from "next/dynamic";
+
+// Динамический импорт компонента анимации корзины без SSR
+const CartAnimationWrapper = dynamic(
+  () => import("@/components/CartAnimationWrapper/CartAnimationWrapper"),
+  { ssr: false }
+);
 
 const LazyParticles = lazy(() => import("@/components/Particles/Particles"));
 const LazyClickSparkProvider = lazy(() =>
@@ -105,50 +113,55 @@ export function Providers({ children }: PropsWithChildren) {
     <Provider store={store}>
       <AuthProvider>
         <QueryClientProvider client={queryClientRef.current}>
-          <Suspense fallback={<SimpleFallback />}>
-            {isAppReady && (
-              <LazyClickSparkProvider
-                sparkColor="#fff"
-                sparkSize={10}
-                sparkRadius={15}
-                sparkCount={8}
-                duration={400}
-              >
-                <div className={"absolute inset-0 z-[1]"}>
-                  <Suspense fallback={<SimpleFallback />}>
-                    <LazyParticles
-                      particleColors={particleSettings.particleColors}
-                      particleCount={particleSettings.particleCount}
-                      particleSpread={particleSettings.particleSpread}
-                      speed={particleSettings.speed}
-                      particleBaseSize={particleSettings.particleBaseSize}
-                      moveParticlesOnHover={true}
-                      alphaParticles={false}
-                      disableRotation={false}
-                      className={"bg-black"}
-                    />
-                  </Suspense>
-                </div>
+          <CartProvider>
+            <Suspense fallback={<SimpleFallback />}>
+              {isAppReady && (
+                <LazyClickSparkProvider
+                  sparkColor="#fff"
+                  sparkSize={10}
+                  sparkRadius={15}
+                  sparkCount={8}
+                  duration={400}
+                >
+                  <div className={"absolute inset-0 z-[1]"}>
+                    <Suspense fallback={<SimpleFallback />}>
+                      <LazyParticles
+                        particleColors={particleSettings.particleColors}
+                        particleCount={particleSettings.particleCount}
+                        particleSpread={particleSettings.particleSpread}
+                        speed={particleSettings.speed}
+                        particleBaseSize={particleSettings.particleBaseSize}
+                        moveParticlesOnHover={true}
+                        alphaParticles={false}
+                        disableRotation={false}
+                        className={"bg-black"}
+                      />
+                    </Suspense>
+                  </div>
 
-                {isLoading && initialPath.current === pathname && <Loader />}
+                  {isLoading && initialPath.current === pathname && <Loader />}
 
-                {children}
-              </LazyClickSparkProvider>
-            )}
+                  {/* Компонент анимации корзины */}
+                  <CartAnimationWrapper />
 
-            {!isAppReady && (
-              <>
-                <SimpleFallback />
-                {children}
-              </>
-            )}
-          </Suspense>
+                  {children}
+                </LazyClickSparkProvider>
+              )}
 
-          {process.env.NODE_ENV === "development" && (
-            <Suspense fallback={null}>
-              <ReactQueryDevtools initialIsOpen={false} />
+              {!isAppReady && (
+                <>
+                  <SimpleFallback />
+                  {children}
+                </>
+              )}
             </Suspense>
-          )}
+
+            {process.env.NODE_ENV === "development" && (
+              <Suspense fallback={null}>
+                <ReactQueryDevtools initialIsOpen={false} />
+              </Suspense>
+            )}
+          </CartProvider>
         </QueryClientProvider>
       </AuthProvider>
     </Provider>

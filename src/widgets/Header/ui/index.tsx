@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { HeaderNav, MobileMenu } from "@/widgets";
 import { useState } from "react";
-import { BurgerMenuButton, ProfileMenu } from "@/features";
+import { BurgerMenuButton, CartButton, ProfileMenu } from "@/features";
 import { Logo } from "@/shared";
 
 export const Header = () => {
@@ -39,7 +39,8 @@ export const Header = () => {
                 </div>
 
                 <div className={"flex items-center gap-4 flex-nowrap"}>
-                  <ProfileMenu />
+                  {/*<ProfileMenu />*/}
+                  <CartButton />
 
                   <div className={"block lg:hidden"}>
                     <BurgerMenuButton

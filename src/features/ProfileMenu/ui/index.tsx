@@ -5,13 +5,13 @@ import { authActions, authService } from "@/entities";
 import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
-import { useHasMounted } from "@/shared";
 
 import styles from "./ProfileMenu.module.css";
 import {
   useAppDispatch,
   useAppSelector,
 } from "@/app/providers/StoreProviders/hooks";
+import { useHasMounted } from "@/shared/hooks";
 
 export const ProfileMenu = () => {
   const dispatch = useAppDispatch();

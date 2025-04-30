@@ -23,6 +23,7 @@ const StarBorder = <T extends React.ElementType = "button">({
 
   return (
     <Component
+      role={"button"}
       className={`relative inline-block py-[1px] overflow-hidden rounded-[20px] ${className}`}
       {...rest}
     >

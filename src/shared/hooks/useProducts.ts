@@ -18,7 +18,7 @@ export const useProducts = () => {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm.trim());
-      setCurrentPage(1); // Reset page on new search
+      setCurrentPage(1);
     }, 1000);
 
     return () => {

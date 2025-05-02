@@ -7,6 +7,7 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  useMemo,
 } from "react";
 import { useCart, CartItem } from "../hooks";
 
@@ -36,9 +37,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     cartItems,
     cartCount,
     addToCart: addToCartBase,
-    updateQuantity,
-    removeFromCart,
-    clearCart,
+    updateQuantity: updateQuantityBase,
+    removeFromCart: removeFromCartBase,
+    clearCart: clearCartBase,
   } = useCart();
 
   const cartButtonRef = useRef<HTMLButtonElement>(null);
@@ -48,13 +49,34 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     useState<string>("");
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const [lastAnimationTime, setLastAnimationTime] = useState<number>(0);
+  const lastAnimationTimeRef = useRef<number>(0);
 
   const addToCart = useCallback(
     (productId: string, quantity: number = 1) => {
       addToCartBase(productId, quantity);
     },
     [addToCartBase],
+  );
+
+  const updateQuantity = useCallback(
+    (productId: string, quantity: number) => {
+      updateQuantityBase(productId, quantity);
+    },
+    [updateQuantityBase],
+  );
+
+  const removeFromCart = useCallback(
+    (productId: string) => {
+      removeFromCartBase(productId);
+    },
+    [removeFromCartBase],
+  );
+
+  const clearCart = useCallback(
+    () => {
+      clearCartBase();
+    },
+    [clearCartBase],
   );
 
   useEffect(() => {
@@ -87,40 +109,51 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       const now = Date.now();
-      if (now - lastAnimationTime < 300) {
+      if (now - lastAnimationTimeRef.current < 300) {
         console.log("Animation skipped due to rate limiting");
         return;
       }
-      setLastAnimationTime(now);
+      lastAnimationTimeRef.current = now;
 
       setIsAnimating(false);
 
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         setAnimationProductElement(productElement);
         setAnimationProductImage(productImage);
         setIsAnimating(true);
-      }, 50);
+      });
     },
-    [cartButtonRef, lastAnimationTime],
+    []
   );
 
+  const contextValue = useMemo(() => ({
+    cartItems,
+    cartCount,
+    addToCart,
+    updateQuantity,
+    removeFromCart,
+    clearCart,
+    cartButtonRef,
+    triggerCartAnimation,
+    animationProductElement,
+    animationProductImage,
+    isAnimating,
+    setIsAnimating,
+  }), [
+    cartItems,
+    cartCount,
+    addToCart,
+    updateQuantity,
+    removeFromCart,
+    clearCart,
+    triggerCartAnimation,
+    animationProductElement,
+    animationProductImage,
+    isAnimating,
+  ]);
+
   return (
-    <CartContext.Provider
-      value={{
-        cartItems,
-        cartCount,
-        addToCart,
-        updateQuantity,
-        removeFromCart,
-        clearCart,
-        cartButtonRef,
-        triggerCartAnimation,
-        animationProductElement,
-        animationProductImage,
-        isAnimating,
-        setIsAnimating,
-      }}
-    >
+    <CartContext.Provider value={contextValue}>
       {children}
     </CartContext.Provider>
   );
